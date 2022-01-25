@@ -1,4 +1,4 @@
-package pl.alex.cars;
+package pl.alex.cars.entity;
 
 import lombok.Getter;
 import lombok.Setter;
