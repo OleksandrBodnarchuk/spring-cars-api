@@ -3,14 +3,14 @@ package pl.alex.cars.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class Modification {
     private String Modification;
     private String pictureLink;
-    private String engine;
-    private String power;
-    private String fuel;
+    private List<Engine> engine;
     private String body;
     private String yearOfProduction;
 
@@ -20,9 +20,6 @@ public class Modification {
                 "Picture: " + pictureLink + '\n' +
                 "Production years: " + yearOfProduction + '\n' +
                 "Engine " + engine + '\n' +
-                "Power " + power + '\n' +
-                "Fuel " + fuel + '\n' +
-                "Body " + body + '\n' +
-                "}";
+                "Body " + body + '\n';
     }
 }

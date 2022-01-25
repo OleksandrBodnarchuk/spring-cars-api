@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import pl.alex.cars.entity.Engine;
 import pl.alex.cars.entity.Manufacturer;
 import pl.alex.cars.entity.Model;
 import pl.alex.cars.entity.Modification;
@@ -11,7 +12,10 @@ import pl.alex.cars.entity.Modification;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DataExporter {
 
@@ -61,7 +65,6 @@ public class DataExporter {
 
             Model model = new Model();
             model.setModel(modelElement.attr("title"));
-            model.setPictureLink(MAIN_URL + modelElement.getElementsByAttribute("src").attr("src"));
 
             String modelLink = MAIN_URL + modelElement.attr("href");
             Document modificationsDoc;
@@ -72,36 +75,57 @@ public class DataExporter {
             }
 
             Elements modificationElements = modificationsDoc.getElementsByClass("mods-container");
-            Modification modification = new Modification();
 
             // GETTING MODEL MODIFICATIONS
-            getModelModifications(manufacturer, model, modificationElements, modification);
+            getModelModifications(manufacturer, model, modificationElements);
         }
     }
 
-    private static void getModelModifications(Manufacturer manufacturer, Model model, Elements modificationElements, Modification modification) {
+    private static void getModelModifications(Manufacturer manufacturer, Model model, Elements modificationElements) {
         for (Element modificationElement : modificationElements) {
             Elements modelModificationDetails = modificationElement.getElementsByAttributeValue("class", "fl");
             Elements modelModificationPhoto = modificationElement.getElementsByClass("modification-group-photo");
 
             if (modelModificationDetails.size() > 0) {
-                getModelModificationData(modification, modelModificationDetails, modelModificationPhoto, model);
+                getModelModificationData(modelModificationDetails, modelModificationPhoto, model);
             }
             manufacturer.addModel(model);
         }
         manufacturers.add(manufacturer);
     }
 
-    private static void getModelModificationData(Modification modification, Elements modelModifications, Elements modelModificationPhoto, Model model) {
+    private static void getModelModificationData(Elements modelModifications, Elements modelModificationPhoto, Model model) {
+        Modification modification;
         String modelTitle;
         String modificationPhoto;
+        List<String> fuelType;
+        List<String> engineTypes;
+        List<Engine> engines = new ArrayList<>();
         for (int i = 0; i < modelModificationPhoto.size(); i++) {
             modelTitle = modelModifications.get(i).getElementsByTag("span").first().text();
             modificationPhoto = MAIN_URL + modelModificationPhoto.get(i).getElementsByAttribute("src").attr("src");
+
+            engineTypes = modelModifications.get(i).getElementsByClass("tl modification-table-title").eachText();
+            fuelType = modelModifications.get(i).getElementsByClass("fuel").eachText();
+
+            Engine engine;
+            for (int j = 0; j < engineTypes.size(); j++) {
+                engine = new Engine();
+                engine.setFuel(fuelType.get(j));
+                engine.setType(engineTypes.get(j));
+                engines.add(engine);
+            }
+
+            modification = new Modification();
+            modification.setEngine(engines);
             modification.setModification(modelTitle);
             modification.setPictureLink(modificationPhoto);
+
             model.addModification(modification);
-            System.out.println(modification);
+
+            System.out.println(model);
         }
     }
+
+
 }
