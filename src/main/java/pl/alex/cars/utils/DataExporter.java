@@ -12,10 +12,7 @@ import pl.alex.cars.entity.Modification;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DataExporter {
 
@@ -98,33 +95,46 @@ public class DataExporter {
         Modification modification;
         String modelTitle;
         String modificationPhoto;
-        List<String> fuelType;
-        List<String> engineTypes;
+        List<String> engineData;
         List<Engine> engines = new ArrayList<>();
         for (int i = 0; i < modelModificationPhoto.size(); i++) {
+            // model modification data export
             modelTitle = modelModifications.get(i).getElementsByTag("span").first().text();
             modificationPhoto = MAIN_URL + modelModificationPhoto.get(i).getElementsByAttribute("src").attr("src");
 
-            engineTypes = modelModifications.get(i).getElementsByClass("tl modification-table-title").eachText();
-            fuelType = modelModifications.get(i).getElementsByClass("fuel").eachText();
+            // Engine data export
+            engineData = modelModifications.get(i).getElementsByAttributeValueStarting("href", "?modification_id=").eachText();
+            engineDataMapper(engineData, engines);
 
-            Engine engine;
-            for (int j = 0; j < engineTypes.size(); j++) {
-                engine = new Engine();
-                engine.setFuel(fuelType.get(j));
-                engine.setType(engineTypes.get(j));
-                engines.add(engine);
-            }
-
-            modification = new Modification();
-            modification.setEngine(engines);
-            modification.setModification(modelTitle);
-            modification.setPictureLink(modificationPhoto);
-
+            // Modification build
+            modification = buildModification(modelTitle, modificationPhoto, engines);
             model.addModification(modification);
 
             System.out.println(model);
         }
+    }
+
+    private static void engineDataMapper(List<String> engineData, List<Engine> engines) {
+        Engine engine;
+
+        for (int j = 0; j < engineData.size(); j=j+5) {
+            engine = new Engine();
+            engine.setType(engineData.get(j));
+            engine.setPower(engineData.get(j + 1));
+            engine.setFuel(engineData.get(j + 2));
+            engine.setBody(engineData.get(j + 3));
+            engine.setYearOfProduction(engineData.get(j + 4));
+            engines.add(engine);
+        }
+    }
+
+    private static Modification buildModification(String modelTitle, String modificationPhoto, List<Engine> engines) {
+        Modification modification;
+        modification = new Modification();
+        modification.setEngine(engines);
+        modification.setModification(modelTitle);
+        modification.setPictureLink(modificationPhoto);
+        return modification;
     }
 
 
