@@ -7,12 +7,12 @@ import java.net.URL;
 public class JpgImageExporter {
 
 
-    public static void downloadImagesFromUrl(String path, String imageTitle, String fileUrl) {
+    public static void downloadImagesFromUrl(String path, String imageTitle, String carUrl) {
         try {
             BufferedImage image;
 
             // DOWNLOADING
-            URL url = new URL(fileUrl);
+            URL url = new URL(carUrl);
             // read the url
             image = ImageIO.read(url);
 
