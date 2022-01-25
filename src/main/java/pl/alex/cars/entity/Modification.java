@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Modification {
-    private String name;
+    private String Modification;
     private String pictureLink;
     private String engine;
     private String power;
@@ -16,8 +16,7 @@ public class Modification {
 
     @Override
     public String toString() {
-        return "Modification: {" + '\n' +
-                "Name: " + name + '\n' +
+        return "Modification: " + Modification + '\n' +
                 "Picture: " + pictureLink + '\n' +
                 "Production years: " + yearOfProduction + '\n' +
                 "Engine " + engine + '\n' +

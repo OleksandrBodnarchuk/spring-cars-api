@@ -1,4 +1,4 @@
-package pl.alex.cars;
+package pl.alex.cars.utils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

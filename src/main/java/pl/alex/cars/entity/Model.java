@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Model {
-    private String title;
+    private String model;
     private final List<Modification> modifications = new ArrayList<>();
     private String pictureLink;
 
@@ -20,10 +20,9 @@ public class Model {
 
     @Override
     public String toString() {
-        return "Model{" + '\n' +
-                "Title: " + title + '\n' +
+        return "Model: " + model + '\n' +
                 "Picture Link: " + pictureLink + '\n' +
-                "Modification: " + modifications + '\n' +
+                "Modifications: " + modifications + '\n' +
                 '}';
     }
 }

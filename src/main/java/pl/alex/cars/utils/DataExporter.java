@@ -1,4 +1,4 @@
-package pl.alex.cars;
+package pl.alex.cars.utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,6 +9,7 @@ import pl.alex.cars.entity.Model;
 import pl.alex.cars.entity.Modification;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +21,18 @@ public class DataExporter {
 
 
     public static void gatherData() throws IOException {
-        System.out.println("Connecting to main URL...");
-        Document document = Jsoup.connect(MAIN_URL).timeout(10 * 10000).get();
-        Elements brandElements = document.getElementsByClass("mods-makes");
+        System.out.println("Loading data from URL...");
+        Document document;
+        try {
+            document = Jsoup.connect(MAIN_URL).timeout(10 * 10000).get();
+        } catch (ConnectException e) {
+            document = Jsoup.connect(MAIN_URL).timeout(10 * 10000).get();
+        }
 
+        Elements brandElements = document.getElementsByClass("mods-makes");
         // GETTING BRANDS
         getBrands(brandElements);
+        System.out.println(manufacturers);
     }
 
     private static void getBrands(Elements brandElements) throws IOException {
@@ -42,18 +49,29 @@ public class DataExporter {
     }
 
     private static void getModels(Elements brandElements, int i, Manufacturer manufacturer) throws IOException {
-        Document models = Jsoup.connect(MAIN_URL + brandElements.get(i).attr("href")).get();
+        Document models;
+        try {
+            models = Jsoup.connect(MAIN_URL + brandElements.get(i).attr("href")).timeout(10 * 10000).get();
+        } catch (ConnectException e) {
+            models = Jsoup.connect(MAIN_URL + brandElements.get(i).attr("href")).timeout(10 * 10000).get();
+
+        }
         Elements modelElements = models.getElementsByClass("mods-makes mods-models");
         for (Element modelElement : modelElements) {
 
             Model model = new Model();
-            model.setTitle(modelElement.attr("title"));
+            model.setModel(modelElement.attr("title"));
             model.setPictureLink(MAIN_URL + modelElement.getElementsByAttribute("src").attr("src"));
 
             String modelLink = MAIN_URL + modelElement.attr("href");
+            Document modificationsDoc;
+            try {
+                modificationsDoc = Jsoup.connect(modelLink).timeout(10 * 50000).get();
+            } catch (ConnectException e) {
+                modificationsDoc = Jsoup.connect(modelLink).timeout(10 * 50000).get();
+            }
 
-            Document modificationsDoc = Jsoup.connect(modelLink).get();
-            Elements modificationElements = modificationsDoc.getElementsByAttributeValue("name", "modifications");
+            Elements modificationElements = modificationsDoc.getElementsByClass("mods-container");
             Modification modification = new Modification();
 
             // GETTING MODEL MODIFICATIONS
@@ -63,24 +81,27 @@ public class DataExporter {
 
     private static void getModelModifications(Manufacturer manufacturer, Model model, Elements modificationElements, Modification modification) {
         for (Element modificationElement : modificationElements) {
-            Elements modelModifications = modificationElement.getElementsByClass("modification-group-name");
+            Elements modelModificationDetails = modificationElement.getElementsByAttributeValue("class", "fl");
             Elements modelModificationPhoto = modificationElement.getElementsByClass("modification-group-photo");
 
-            getModelModificationData(modification, modelModifications, modelModificationPhoto);
-
-            model.addModification(modification);
+            if (modelModificationDetails.size() > 0) {
+                getModelModificationData(modification, modelModificationDetails, modelModificationPhoto, model);
+            }
             manufacturer.addModel(model);
-            System.out.println(manufacturer);
-
         }
+        manufacturers.add(manufacturer);
     }
 
-    private static void getModelModificationData(Modification modification, Elements modelModifications, Elements modelModificationPhoto) {
-        for (int j = 0; j < modelModifications.size(); j++) {
-            String name = modelModifications.get(j).getElementsByTag("span").text();
-            modification.setName(name);
-            String modificationPicture = MAIN_URL + modelModificationPhoto.get(j).getElementsByTag("img").attr("src");
-            modification.setPictureLink(modificationPicture);
+    private static void getModelModificationData(Modification modification, Elements modelModifications, Elements modelModificationPhoto, Model model) {
+        String modelTitle;
+        String modificationPhoto;
+        for (int i = 0; i < modelModificationPhoto.size(); i++) {
+            modelTitle = modelModifications.get(i).getElementsByTag("span").first().text();
+            modificationPhoto = MAIN_URL + modelModificationPhoto.get(i).getElementsByAttribute("src").attr("src");
+            modification.setModification(modelTitle);
+            modification.setPictureLink(modificationPhoto);
+            model.addModification(modification);
+            System.out.println(modification);
         }
     }
 }
