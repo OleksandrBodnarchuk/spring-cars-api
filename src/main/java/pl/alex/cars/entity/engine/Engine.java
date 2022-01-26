@@ -1,10 +1,12 @@
-package pl.alex.cars.entity;
+package pl.alex.cars.entity.engine;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class Engine {
     private String type;
     private String power;

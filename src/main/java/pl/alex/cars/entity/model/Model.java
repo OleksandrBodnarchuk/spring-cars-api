@@ -1,7 +1,8 @@
-package pl.alex.cars.entity;
+package pl.alex.cars.entity.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.alex.cars.entity.modification.Modification;
 
 import java.util.ArrayList;
 import java.util.List;
