@@ -4,6 +4,7 @@ import org.jsoup.select.Elements;
 import pl.alex.cars.entity.chasis.Chassis;
 import pl.alex.cars.entity.dimentions.Dimensions;
 import pl.alex.cars.entity.engine.Engine;
+import pl.alex.cars.entity.fuelConsumption.FuelConsumption;
 import pl.alex.cars.entity.modification.Bodywork;
 import pl.alex.cars.entity.modification.Variant;
 import pl.alex.cars.entity.transmission.Transmission;
@@ -20,6 +21,7 @@ public class VariantUtils extends ConnectionUtil {
         Transmission transmission;
         Dimensions dimensions;
         Chassis chassis;
+        FuelConsumption fuelConsumption;
         Elements variantsData =
                 ConnectionUtil.getHtmlDocFromUrl(modificationVariantsLink)
                         .getElementsByClass("table_mods").get(1)
@@ -29,16 +31,29 @@ public class VariantUtils extends ConnectionUtil {
         transmission = getTransmission(variantsData);
         dimensions = getDimensions(variantsData);
         chassis = getChassis(variantsData);
+        fuelConsumption = getFuelConsumption(variantsData);
         variant = Variant.builder()
                 .bodywork(bodywork)
                 .engine(engine)
                 .transmission(transmission)
                 .dimensions(dimensions)
                 .chassis(chassis)
+                .fuelConsumption(fuelConsumption)
                 .build();
 
         System.out.println("  sadsds");
         return variant;
+    }
+
+    private static FuelConsumption getFuelConsumption(Elements variantsData) {
+        int index = 29;
+        return FuelConsumption.builder()
+                .urban(variantsData.get(index).text())
+                .extraUrban(variantsData.get(++index).text())
+                .combined(variantsData.get(++index).text())
+                .cO2Emissions(variantsData.get(++index).text())
+                .fuelTankCapacity(variantsData.get(++index).text())
+                .build();
     }
 
     private static Chassis getChassis(Elements variantsData) {

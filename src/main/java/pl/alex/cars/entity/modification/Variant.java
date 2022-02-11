@@ -6,6 +6,7 @@ import lombok.Setter;
 import pl.alex.cars.entity.chasis.Chassis;
 import pl.alex.cars.entity.dimentions.Dimensions;
 import pl.alex.cars.entity.engine.Engine;
+import pl.alex.cars.entity.fuelConsumption.FuelConsumption;
 import pl.alex.cars.entity.transmission.Transmission;
 
 @Getter
@@ -17,6 +18,7 @@ public class Variant {
     private Transmission transmission;
     private Dimensions dimensions;
     private Chassis chassis;
+    private FuelConsumption fuelConsumption;
 
     @Override
     public String toString() {
@@ -25,6 +27,7 @@ public class Variant {
                 "Transmission: " + transmission + '\n' +
                 "Dimensions: " + dimensions + '\n' +
                 "Chassis: " + chassis + '\n' +
+                "FuelConsumption: " + fuelConsumption + '\n' +
                 '}';
     }
 
