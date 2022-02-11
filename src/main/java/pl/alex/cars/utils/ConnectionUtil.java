@@ -10,7 +10,7 @@ import java.net.ConnectException;
  * CLass that get our connections
  */
 public class ConnectionUtil {
-    public static final String MAIN_URL = "http://www.automobile-data.com/";
+    protected static String MAIN_URL = "http://www.automobile-data.com/";
     // URL CONNECTION
     protected static Document getHtmlDocFromUrl(String url) throws IOException {
         Document document;

@@ -8,17 +8,17 @@ import pl.alex.cars.entity.model.Model;
 
 import java.io.IOException;
 
-public class ModelUtils {
+public class ModelUtils extends ConnectionUtil{
     protected static void getModels(Elements brandElements, int i, Manufacturer manufacturer) throws IOException {
-        String modelsUrl = ConnectionUtil.MAIN_URL + brandElements.get(i).attr("href");
+        String modelsUrl = MAIN_URL + brandElements.get(i).attr("href");
 
-        Document models = ConnectionUtil.getHtmlDocFromUrl(modelsUrl);
+        Document models = getHtmlDocFromUrl(modelsUrl);
         Elements modelElements = models.getElementsByClass("mods-makes mods-models");
         for (Element modelElement : modelElements) {
             Model model = new Model();
             model.setModel(modelElement.attr("title"));
             // 3. GETTING MODIFICATIONS - PER MODEL
-            String modelModificationsUrl = ConnectionUtil.MAIN_URL + modelElement.attr("href");
+            String modelModificationsUrl = MAIN_URL + modelElement.attr("href");
             ModificationUtils.getModelModifications(manufacturer, model, modelModificationsUrl);
         }
     }

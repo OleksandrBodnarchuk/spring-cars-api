@@ -13,7 +13,7 @@ import java.util.List;
 // EACH MODIFICATION HAS MULTIPLE ENGINES
 // EACH ENGINE HAS IT'S TECHNICAL SPECIFICATION
 
-public class DataExporter {
+public class DataExporter extends ConnectionUtil{
 
     // List with data - to be changed with Repository
     private static final List<Manufacturer> manufacturers = new ArrayList<>();
@@ -22,7 +22,7 @@ public class DataExporter {
         System.out.println("Loading data from URL.\nThis may take a while.");
         Document document;
         try {
-            document = ConnectionUtil.getHtmlDocFromUrl(ConnectionUtil.MAIN_URL);
+            document = getHtmlDocFromUrl(ConnectionUtil.MAIN_URL);
             Elements brandElements = document.getElementsByClass("mods-makes");
             // 1. GETTING BRANDS AND CONNECTED INFO
             BrandUtils.getBrands(brandElements);

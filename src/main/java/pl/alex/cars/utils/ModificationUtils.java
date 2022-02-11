@@ -2,6 +2,7 @@ package pl.alex.cars.utils;
 
 import lombok.Getter;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.alex.cars.entity.Manufacturer;
 import pl.alex.cars.entity.model.Model;
@@ -9,18 +10,17 @@ import pl.alex.cars.entity.modification.Modification;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /*
  * Class that helps to extract data for Modifications
  */
 @Getter
-public class ModificationUtils {
+public class ModificationUtils extends ConnectionUtil{
 
     protected static void getModelModifications(Manufacturer manufacturer, Model model, String modelModificationsUrl) throws IOException {
         Modification modification = null;
         modelModificationsUrl = "http://www.automobile-data.com/?model_id=151"; // TODO: DELETE
-        Document modificationsDoc = ConnectionUtil.getHtmlDocFromUrl(modelModificationsUrl);
+        Document modificationsDoc = getHtmlDocFromUrl(modelModificationsUrl);
         Elements modificationElements = modificationsDoc.getElementsByClass("fl");
         Elements modelModificationPhoto = modificationsDoc.getElementsByAttributeValueStarting("src", "/images/modification_groups/");
 
@@ -30,12 +30,25 @@ public class ModificationUtils {
             // getting urls to each modification
             List<String> modificationVariantsLinks = getModificationVariantsLinks(modificationElements, i);
 
-            modification = Modification.builder()
-                    .modificationName(modificationName)
-                    .pictureLink(modificationPhoto)
-                    .build();
+            modification = buildModification(modificationName, modificationPhoto, modificationVariantsLinks);
+
+            // Add modification to model list
+            model.addModification(modification);
+
         }
+
         manufacturer.addModel(model);
+    }
+
+    private static Modification buildModification(String modificationName, String modificationPhoto, List<String> modificationVariantsLinks) throws IOException {
+        Modification modification = new Modification(modificationName, modificationPhoto);
+        for (int i = 0; i < modificationVariantsLinks.size(); i++) {
+            Document modificationsDoc = ConnectionUtil.getHtmlDocFromUrl(modificationVariantsLinks.get(i));
+            Element modificationVariants = modificationsDoc.getElementsByClass("table_mods").get(1);
+
+            System.out.println(modificationsDoc);
+        }
+        return modification;
     }
 
     private static List<String> getModificationVariantsLinks(Elements modificationElements, int i) {
@@ -48,7 +61,8 @@ public class ModificationUtils {
     }
 
     private static String extractModificationPhoto(Elements modelModificationPhoto, int i) {
-        return ConnectionUtil.MAIN_URL + modelModificationPhoto.get(i).getElementsByAttribute("src").attr("src");
+        return ConnectionUtil.MAIN_URL + modelModificationPhoto.get(i).getElementsByAttribute("src").attr("src").substring(1);
+        // TODO: eliminate substring() call
     }
 
 }
