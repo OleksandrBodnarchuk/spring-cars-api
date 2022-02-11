@@ -1,6 +1,8 @@
 package pl.alex.cars.utils;
 
 import org.jsoup.select.Elements;
+import pl.alex.cars.entity.chasis.Chassis;
+import pl.alex.cars.entity.dimentions.Dimensions;
 import pl.alex.cars.entity.engine.Engine;
 import pl.alex.cars.entity.modification.Bodywork;
 import pl.alex.cars.entity.modification.Variant;
@@ -16,6 +18,8 @@ public class VariantUtils extends ConnectionUtil {
         Bodywork bodywork;
         Engine engine;
         Transmission transmission;
+        Dimensions dimensions;
+        Chassis chassis;
         Elements variantsData =
                 ConnectionUtil.getHtmlDocFromUrl(modificationVariantsLink)
                         .getElementsByClass("table_mods").get(1)
@@ -23,14 +27,28 @@ public class VariantUtils extends ConnectionUtil {
         bodywork = getBodywork(variantsData);
         engine = getEngine(variantsData);
         transmission = getTransmission(variantsData);
-
+        dimensions = getDimensions(variantsData);
         variant = Variant.builder()
                 .bodywork(bodywork)
                 .engine(engine)
                 .transmission(transmission)
+                .dimensions(dimensions)
+                .chassis(chassis)
                 .build();
         System.out.println("  sadsds");
         return variant;
+    }
+
+    private static Dimensions getDimensions(Elements variantsData) {
+        int index = 18;
+        return Dimensions.builder()
+                .lengthMm(Integer.parseInt(variantsData.get(index).text().substring(0,4)))
+                .widthMm(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
+                .heightMm(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
+                .weight(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
+                .maxWeight(Integer.parseInt(variantsData.get(index).text().substring(8,12)))
+                .wheelBaseMm(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
+                .build();
     }
 
     private static Transmission getTransmission(Elements variantsData) {
