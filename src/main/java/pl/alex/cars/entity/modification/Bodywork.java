@@ -9,8 +9,8 @@ import lombok.Setter;
 @Builder
 public class Bodywork {
     private String bodyType;
-    private int numberOfDoors;
-    private int numberOfSeats;
+    private String numberOfDoors;
+    private String numberOfSeats;
     private String luggageCapacity;
 
     @Override

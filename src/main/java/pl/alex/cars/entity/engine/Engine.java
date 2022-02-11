@@ -13,16 +13,16 @@ public class Engine {
 
     private String engineType;
     private String enginePosition;
-    private int engineCapacityCc;
-    private int cylinders;
-    private int valves;
+    private String engineCapacityCc;
+    private String cylinders;
+    private String valves;
 
-    private int powerOutputBhp;
-    private int powerOutputKw;
-    private int powerOutputRpm;
+    private String powerOutputBhp;
+    private String powerOutputKw;
+    private String powerOutputRpm;
 
-    private float accelerationTo100;
-    private int topSpeed;
+    private String accelerationTo100;
+    private String topSpeed;
 
     @Override
     public String toString() {

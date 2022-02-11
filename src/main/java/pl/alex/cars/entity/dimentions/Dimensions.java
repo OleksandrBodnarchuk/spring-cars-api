@@ -8,22 +8,20 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Dimensions {
-    private int lengthMm;
-    private int widthMm;
-    private int heightMm;
-    private int weight;
-    private int maxWeight;
-    private int wheelBaseMm;
+    private String length;
+    private String width;
+    private String height;
+    private String weight;
+    private String wheelBase;
 
     @Override
     public String toString() {
         return "Dimensions{\n" +
-                "lengthMm: " + lengthMm + "\n" +
-                "widthMm: " + widthMm + "\n" +
-                "heightMm: " + heightMm + "\n" +
+                "lengthMm: " + length + "\n" +
+                "widthMm: " + width + "\n" +
+                "heightMm: " + height + "\n" +
                 "weight: " + weight + "\n" +
-                "maxWeight: " + maxWeight + "\n" +
-                "wheelBaseMm: " + wheelBaseMm + "\n" +
+                "wheelBaseMm: " + wheelBase + "\n" +
                 '}';
     }
 }

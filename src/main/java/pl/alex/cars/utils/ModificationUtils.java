@@ -20,7 +20,6 @@ public class ModificationUtils extends ConnectionUtil {
 
     protected static void getModelModifications(Manufacturer manufacturer, Model model, String modelModificationsUrl) throws IOException {
         Modification modification = null;
-        modelModificationsUrl = "http://www.automobile-data.com/?model_id=151"; // TODO: DELETE
         Document modificationsDoc = getHtmlDocFromUrl(modelModificationsUrl);
         Elements modificationElements = modificationsDoc.getElementsByClass("fl");
         Elements modelModificationPhoto = modificationsDoc.getElementsByAttributeValueStarting("src", "/images/modification_groups/");
@@ -30,14 +29,13 @@ public class ModificationUtils extends ConnectionUtil {
             String modificationPhoto = extractModificationPhoto(modelModificationPhoto, i);
             // getting urls to each modification
             List<String> modificationVariantsLinks = getModificationVariantsLinks(modificationElements, i);
-
+            // TODO: add year of production
             modification = buildModification(modificationName, modificationPhoto, modificationVariantsLinks);
 
             // Add modification to model list
             model.addModification(modification);
-
         }
-
+        System.out.println(model);
         manufacturer.addModel(model);
     }
 

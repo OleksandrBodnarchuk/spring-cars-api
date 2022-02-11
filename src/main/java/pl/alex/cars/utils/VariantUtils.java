@@ -16,16 +16,14 @@ public class VariantUtils extends ConnectionUtil {
 
     protected static Variant extractVariantData(String modificationVariantsLink) throws IOException {
         Variant variant;
-        Bodywork bodywork;
-        Engine engine;
-        Transmission transmission;
-        Dimensions dimensions;
-        Chassis chassis;
-        FuelConsumption fuelConsumption;
-        Elements variantsData =
-                ConnectionUtil.getHtmlDocFromUrl(modificationVariantsLink)
-                        .getElementsByClass("table_mods").get(1)
-                        .getElementsByTag("span");
+        Bodywork bodywork = null;
+        Engine engine = null;
+        Transmission transmission = null;
+        Dimensions dimensions = null;
+        Chassis chassis = null;
+        FuelConsumption fuelConsumption = null;
+        Elements variantsData = ConnectionUtil.getHtmlDocFromUrl(modificationVariantsLink).select("table").get(1).getElementsByTag("span");
+        // TODO: FIX IndexOutOfBoundsException  ERROR
         bodywork = getBodywork(variantsData);
         engine = getEngine(variantsData);
         transmission = getTransmission(variantsData);
@@ -41,7 +39,6 @@ public class VariantUtils extends ConnectionUtil {
                 .fuelConsumption(fuelConsumption)
                 .build();
 
-        System.out.println("  sadsds");
         return variant;
     }
 
@@ -71,12 +68,11 @@ public class VariantUtils extends ConnectionUtil {
     private static Dimensions getDimensions(Elements variantsData) {
         int index = 18;
         return Dimensions.builder()
-                .lengthMm(Integer.parseInt(variantsData.get(index).text().substring(0,4)))
-                .widthMm(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
-                .heightMm(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
-                .weight(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
-                .maxWeight(Integer.parseInt(variantsData.get(index).text().substring(8,12)))
-                .wheelBaseMm(Integer.parseInt(variantsData.get(++index).text().substring(0,4)))
+                .length(variantsData.get(index).text())
+                .width(variantsData.get(++index).text())
+                .height(variantsData.get(++index).text())
+                .weight(variantsData.get(++index).text())
+                .wheelBase(variantsData.get(++index).text())
                 .build();
     }
 
@@ -90,21 +86,21 @@ public class VariantUtils extends ConnectionUtil {
     }
 
     private static Engine getEngine(Elements variantsData) {
-
-        int index = 6;
+        String[] cylindersAndValves = variantsData.get(11).text().split("/");
+        String[] powerBhpKwRpm = variantsData.get(12).text().split("/");
         return Engine.builder()
-                .fuel(variantsData.get(index).text())
-                .fuelSystem(variantsData.get(++index).text())
-                .engineType(variantsData.get(++index).text())
-                .enginePosition(variantsData.get(++index).text())
-                .engineCapacityCc(Integer.parseInt(variantsData.get(++index).text()))
-                .cylinders(Integer.parseInt(variantsData.get(++index).text().substring(0,1)))
-                .valves(Integer.parseInt(variantsData.get(index).text().substring(2)))
-                .powerOutputBhp(Integer.parseInt(variantsData.get(++index).text().substring(0,3)))
-                .powerOutputKw(Integer.parseInt(variantsData.get(index).text().substring(4,7)))
-                .powerOutputRpm(Integer.parseInt(variantsData.get(index).text().substring(8)))
-                .accelerationTo100(Float.parseFloat(variantsData.get(++index).text()))
-                .topSpeed(Integer.parseInt(variantsData.get(++index).text().substring(0,3)))
+                .fuel(variantsData.get(6).text())
+                .fuelSystem(variantsData.get(7).text())
+                .engineType(variantsData.get(8).text())
+                .enginePosition(variantsData.get(9).text())
+                .engineCapacityCc(variantsData.get(10).text())
+                .cylinders(cylindersAndValves[0])
+                .valves(cylindersAndValves[1])
+                .powerOutputBhp(powerBhpKwRpm[0])
+                .powerOutputKw(powerBhpKwRpm[1])
+                .powerOutputRpm(powerBhpKwRpm[2])
+                .accelerationTo100(variantsData.get(13).text())
+                .topSpeed(variantsData.get(14).text())
                 .build();
     }
 
@@ -112,8 +108,8 @@ public class VariantUtils extends ConnectionUtil {
         int index = 2;
         return Bodywork.builder()
                 .bodyType(variantsData.get(index).text())
-                .numberOfDoors(Integer.parseInt(variantsData.get(++index).text()))
-                .numberOfSeats(Integer.parseInt(variantsData.get(++index).text()))
+                .numberOfDoors(variantsData.get(++index).text())
+                .numberOfSeats(variantsData.get(++index).text())
                 .luggageCapacity(variantsData.get(++index).text())
                 .build();
     }
