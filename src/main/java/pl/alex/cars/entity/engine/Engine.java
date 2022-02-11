@@ -24,5 +24,21 @@ public class Engine {
     private float accelerationTo100;
     private int topSpeed;
 
-
+    @Override
+    public String toString() {
+        return "Engine{\n" +
+                "Fuel" + fuel + '\n' +
+                "Fuel System" + fuelSystem + '\n' +
+                "engineType='" + engineType + '\n' +
+                "enginePosition='" + enginePosition + '\n' +
+                "engineCapacityCc=" + engineCapacityCc + '\n' +
+                "cylinders=" + cylinders + '\n' +
+                "valves=" + valves + '\n' +
+                "powerOutputBhp=" + powerOutputBhp + '\n' +
+                "powerOutputKw=" + powerOutputKw + '\n' +
+                "powerOutputRpm=" + powerOutputRpm + '\n' +
+                "accelerationTo100=" + accelerationTo100 + '\n' +
+                "topSpeed=" + topSpeed + '\n' +
+                '}';
+    }
 }

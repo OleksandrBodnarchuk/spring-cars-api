@@ -4,6 +4,7 @@ import org.jsoup.select.Elements;
 import pl.alex.cars.entity.engine.Engine;
 import pl.alex.cars.entity.modification.Bodywork;
 import pl.alex.cars.entity.modification.Variant;
+import pl.alex.cars.entity.transmission.Transmission;
 
 import java.io.IOException;
 
@@ -14,20 +15,31 @@ public class VariantUtils extends ConnectionUtil {
         Variant variant;
         Bodywork bodywork;
         Engine engine;
-
+        Transmission transmission;
         Elements variantsData =
                 ConnectionUtil.getHtmlDocFromUrl(modificationVariantsLink)
                         .getElementsByClass("table_mods").get(1)
                         .getElementsByTag("span");
         bodywork = getBodywork(variantsData);
         engine = getEngine(variantsData);
+        transmission = getTransmission(variantsData);
 
         variant = Variant.builder()
                 .bodywork(bodywork)
                 .engine(engine)
+                .transmission(transmission)
                 .build();
         System.out.println("  sadsds");
         return variant;
+    }
+
+    private static Transmission getTransmission(Elements variantsData) {
+        int index = 15;
+        return Transmission.builder()
+                .driveWheels(variantsData.get(index).text())
+                .steering(variantsData.get(++index).text())
+                .gearbox(variantsData.get(++index).text())
+                .build();
     }
 
     private static Engine getEngine(Elements variantsData) {
