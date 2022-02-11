@@ -28,6 +28,7 @@ public class VariantUtils extends ConnectionUtil {
         engine = getEngine(variantsData);
         transmission = getTransmission(variantsData);
         dimensions = getDimensions(variantsData);
+        chassis = getChassis(variantsData);
         variant = Variant.builder()
                 .bodywork(bodywork)
                 .engine(engine)
@@ -35,8 +36,21 @@ public class VariantUtils extends ConnectionUtil {
                 .dimensions(dimensions)
                 .chassis(chassis)
                 .build();
+
         System.out.println("  sadsds");
         return variant;
+    }
+
+    private static Chassis getChassis(Elements variantsData) {
+        int index = 23;
+        return Chassis.builder()
+                .frontSuspension(variantsData.get(index).text())
+                .rearSuspension(variantsData.get(++index).text())
+                .frontBrakes(variantsData.get(++index).text())
+                .rearBrakes(variantsData.get(++index).text())
+                .frontTires(variantsData.get(++index).text())
+                .rearTires(variantsData.get(++index).text())
+                .build();
     }
 
     private static Dimensions getDimensions(Elements variantsData) {
