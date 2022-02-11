@@ -11,16 +11,12 @@ import java.util.List;
 @Setter
 @Builder
 public class Modification {
-    private String modification;
+    private String modificationName;
     private String pictureLink;
-    private List<Engine> engine;
-
 
     @Override
     public String toString() {
-        return "Modification: " + modification + '\n' +
-                "Picture: " + pictureLink + '\n' +
-                "Engines: " + engine + '\n';
-
+        return "Modification: " + modificationName +
+                "Photo: " + pictureLink;
     }
 }

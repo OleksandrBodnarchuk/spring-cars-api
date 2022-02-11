@@ -15,7 +15,8 @@ public class Engine {
     private String engineType;
     private String enginePosition;
     private int engineCapacityCc;
-    private String cylinders_valves;
+    private int cylinders;
+    private int valves;
 
     private int powerOutputBhp;
     private int powerOutputKw;

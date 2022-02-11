@@ -17,7 +17,7 @@ public class ModelUtils {
         for (Element modelElement : modelElements) {
             Model model = new Model();
             model.setModel(modelElement.attr("title"));
-            // GETTING MODIFICATIONS - PER MODEL
+            // 3. GETTING MODIFICATIONS - PER MODEL
             String modelModificationsUrl = ConnectionUtil.MAIN_URL + modelElement.attr("href");
             ModificationUtils.getModelModifications(manufacturer, model, modelModificationsUrl);
         }

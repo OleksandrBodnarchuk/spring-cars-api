@@ -17,7 +17,7 @@ public class BrandUtils {
             manufacturer.setTitle(brandName);
             String brandLogo = brandElements.get(i).getElementsByAttribute("src").attr("src");
             manufacturer.setBrandLogo(brandLogo);
-            // GETTING MODELS
+            // 2. GETTING MODELS
             ModelUtils.getModels(brandElements, i, manufacturer);
         }
     }

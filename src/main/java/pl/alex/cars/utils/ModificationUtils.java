@@ -2,12 +2,10 @@ package pl.alex.cars.utils;
 
 import lombok.Getter;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.alex.cars.entity.Manufacturer;
 import pl.alex.cars.entity.engine.Engine;
 import pl.alex.cars.entity.model.Model;
-import pl.alex.cars.entity.modification.Modification;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,46 +15,26 @@ import java.util.List;
  */
 @Getter
 public class ModificationUtils {
-    private static List<Engine> engines;
 
     protected static void getModelModifications(Manufacturer manufacturer, Model model, String modelModificationsUrl) throws IOException {
+       modelModificationsUrl = "http://www.automobile-data.com/?model_id=151"; // TODO: DELETE
         Document modificationsDoc = ConnectionUtil.getHtmlDocFromUrl(modelModificationsUrl);
-        Elements modificationElements = modificationsDoc.getElementsByClass("mods-container");
+        Elements modificationElements = modificationsDoc.getElementsByClass("fl");
+        Elements modelModificationPhoto = modificationsDoc.getElementsByAttributeValueStarting("src","/images/modification_groups/");
 
-        for (Element modificationElement : modificationElements) {
-            Elements modelModificationDetails = modificationElement.getElementsByAttributeValue("class", "fl");
-            Elements modelModificationPhoto = modificationElement.getElementsByClass("modification-group-photo");
-
-            if (modelModificationDetails.size() > 0) {
-                ModificationUtils.getModificationData(modelModificationDetails, modelModificationPhoto, model);
-            }
-            manufacturer.addModel(model);
+        getModificationPhoto(modelModificationPhoto);
+        manufacturer.addModel(model);
         }
-    }
 
-    private static void getModificationData(Elements modifications, Elements modelModificationPhoto, Model model) {
-        Modification modification;
-        String modificationName;
-        String modificationPhoto;
-
+    private static String getModificationPhoto(Elements modelModificationPhoto) {
+        String modificationPhotoUrl = "";
         for (int i = 0; i < modelModificationPhoto.size(); i++) {
-            // model modification data export
-            modificationName = modifications.get(i).getElementsByTag("span").first().text();
-            modificationPhoto = extractModificationPhoto(modelModificationPhoto, i);
-
-            // ENGINE DATA EXPORT
-            engines = EngineUtils.engineDataMapper(modifications, i);
-
-            // Modification build
-            modification = Modification.builder()
-                    .modification(modificationName)
-                    .engine(engines)
-                    .pictureLink(modificationPhoto)
-                    .build();
-
-            model.addModification(modification);
+            // Getting photo for each modification
+            modificationPhotoUrl = modelModificationPhoto.get(i).attr("src");
         }
+        return modificationPhotoUrl;
     }
+
 
     private static String extractModificationPhoto(Elements modelModificationPhoto, int i) {
         return ConnectionUtil.MAIN_URL + modelModificationPhoto.get(i).getElementsByAttribute("src").attr("src");
