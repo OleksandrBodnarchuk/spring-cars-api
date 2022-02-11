@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Engine {
-    private String engineName;
     private String fuel;
     private String fuelSystem;
 
@@ -21,9 +20,6 @@ public class Engine {
     private int powerOutputBhp;
     private int powerOutputKw;
     private int powerOutputRpm;
-
-    private int torqueNm;
-    private int torqueRpm;
 
     private float accelerationTo100;
     private int topSpeed;
