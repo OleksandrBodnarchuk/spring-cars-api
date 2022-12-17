@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ManufacturerDto {
+	private long id;
 	private String name;
-	private Long manufacturer_value;
+	private Long value;
 }
