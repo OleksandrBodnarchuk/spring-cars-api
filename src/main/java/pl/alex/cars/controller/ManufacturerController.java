@@ -23,12 +23,6 @@ public class ManufacturerController {
 		this.manufacturerService = manufacturerService;
 	}
 	
-	@GetMapping
-	public ResponseEntity<String> savePictures(){
-		manufacturerService.getPicturest();
-		return ResponseEntity.ok("Saved");
-	}
-
 	@PostMapping("/list")
 	public ResponseEntity<String> saveMultipleManufacturers(@RequestBody List<ManufacturerDto> dtos) {
 		if (manufacturerService.saveAllManufacturerDtos(dtos)) {

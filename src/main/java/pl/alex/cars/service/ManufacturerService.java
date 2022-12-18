@@ -1,11 +1,9 @@
 package pl.alex.cars.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.springframework.stereotype.Service;
 
 import pl.alex.cars.dto.ManufacturerDto;
@@ -18,11 +16,9 @@ import pl.alex.cars.repository.ManufacturerRepository;
 public class ManufacturerService {
 
 	private final ManufacturerRepository manufacturerRepository;
-	private final LogoService logoService;
 
-	public ManufacturerService(ManufacturerRepository manufacturerRepository, LogoService logoService) {
+	public ManufacturerService(ManufacturerRepository manufacturerRepository) {
 		this.manufacturerRepository = manufacturerRepository;
-		this.logoService = logoService;
 	}
 
 	public boolean saveAllManufacturerDtos(List<ManufacturerDto> dtos) {
@@ -32,29 +28,18 @@ public class ManufacturerService {
 		return !manufacturers.isEmpty();
 	}
 
-	private List<Manufacturer> findAllManufacturers() {
-		return manufacturerRepository.findAll();
+	public List<ManufacturerDto> findAllManufacturers() {
+		// TODO: add checks for null
+		return manufacturerRepository.findAll().stream().map(ManufacturerMapper.INSTANCE::convertToDto)
+				.collect(Collectors.toList());
 	}
 
-	public void getPicturest() {
-		List<Manufacturer> entities = findAllManufacturers();
-		String path = "/spring-cars-api/src/main/resources/logos";
-		entities.forEach(e -> {
-			downloadImagesFromUrl(path, e, MAIN_URL + e.getManufacturer_value() + ".jpg");
-		});
-	}
-
-	protected static String MAIN_URL = "https://carmaniac.co.uk/images/makeslogos/";
-
-	public void downloadImagesFromUrl(String path, Manufacturer entity, String carUrl) {
-		// DOWNLOADING
-		try (InputStream in = new URL(carUrl).openStream()) {
-			Logo saved = logoService.saveLogo(in, entity);
-			entity.setLogo(saved);
+	public void saveDtoWithLogo(ManufacturerDto dto, Logo logo) {
+		if(dto!=null) {
+			Manufacturer entity = ManufacturerMapper.INSTANCE.convertToEntity(dto);
+			entity.setLogo(logo);
 			manufacturerRepository.save(entity);
-		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
 		}
-
 	}
+
 }
