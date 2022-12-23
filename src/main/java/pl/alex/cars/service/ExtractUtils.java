@@ -6,10 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -17,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.alex.cars.dto.extract.ManufacturerExtractDto;
 import pl.alex.cars.dto.extract.ModelExtractDto;
+import pl.alex.cars.dto.extract.VariantExtractDto;
 
 public class ExtractUtils {
 
@@ -28,12 +26,44 @@ public class ExtractUtils {
 		logger.debug("[ExtractService] - extractAll");
 		Map<String, ManufacturerExtractDto> dtos = extractManufacturersData();
 		dtos.forEach((name, dto) -> {
-			dto = extractManufacturerDetailsData(dto);
+			dto = extractModelsData(dto);
+			dto.getModels().forEach(model -> {
+				model = extractVariantData(model);	
+			});
+			System.out.println(dto);			
 		});
 						
 	}
 
-	private ManufacturerExtractDto extractManufacturerDetailsData(ManufacturerExtractDto dto) {
+	private ModelExtractDto extractVariantData(ModelExtractDto model) {
+		logger.debug("[ExtractService] - extractManufacturerDetailsData");
+		String line;
+		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(model.getUrl()).openStream()))) {
+			while ((line = dis.readLine()) != null) {
+				line = line.trim();
+				if (line.trim().startsWith("<a title=\"")) {
+					String name = line.substring(line.indexOf("\"") + 1, line.indexOf("\" href=\""));
+					String link = line.substring(line.indexOf("/en/models/"), line.lastIndexOf("\""));
+					VariantExtractDto variant = VariantExtractDto
+							.builder()
+							.name(name)
+							.url(mainUrl + link)
+							.modifications(null)
+							.build();
+					if (model.getVariants() == null) {
+						model.setVariants(new ArrayList<>());
+					}
+					model.getVariants().add(variant);
+				}
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+
+		return model;
+	}
+
+	private ManufacturerExtractDto extractModelsData(ManufacturerExtractDto dto) {
 		logger.debug("[ExtractService] - extractManufacturerDetailsData");
 		String line;
 		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(dto.getUrl()).openStream()))) {
@@ -44,7 +74,7 @@ public class ExtractUtils {
 					ModelExtractDto modelDto = ModelExtractDto
 							.builder()
 							.name(name)
-							.url(link)
+							.url(mainUrl + link)
 							.variants(null)
 							.build();
 					if (dto.getModels() == null) {

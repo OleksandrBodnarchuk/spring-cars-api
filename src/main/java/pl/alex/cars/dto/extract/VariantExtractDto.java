@@ -13,6 +13,5 @@ public class VariantExtractDto {
 
 	private String name;
 	private String url;
-	private String imageUrl;
 	private List<ModificationExctractDto> modifications;
 }
