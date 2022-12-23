@@ -10,6 +10,6 @@ import pl.alex.cars.entity.model.Model;
 public interface ModelMapper {
 	ModelMapper INSTANCE = Mappers.getMapper(ModelMapper.class);
 
-	Model convertToEntity(ModelDto dto);
-	ModelDto convertToDto(Model model);
+//	Model convertToEntity(ModelDto dto);
+//	ModelDto convertToDto(Model model);
 }

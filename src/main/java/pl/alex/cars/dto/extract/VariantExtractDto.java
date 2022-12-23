@@ -9,9 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ModelExtractDto {
+public class VariantExtractDto {
 
 	private String name;
 	private String url;
-	private List<VariantExtractDto> variants;
+	private String imageUrl;
+	private List<ModificationExctractDto> modifications;
 }
