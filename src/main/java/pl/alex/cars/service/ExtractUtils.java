@@ -16,7 +16,8 @@ import pl.alex.cars.dto.extract.DtoPairs;
 import pl.alex.cars.dto.extract.Extractable;
 import pl.alex.cars.dto.extract.ManufacturerExtractDto;
 import pl.alex.cars.dto.extract.ModelExtractDto;
-import pl.alex.cars.dto.extract.VariantExtractDto;
+import pl.alex.cars.dto.extract.ModificationExctractDto;
+import pl.alex.cars.dto.extract.SubModelExtractDto;
 
 public class ExtractUtils {
 
@@ -30,15 +31,73 @@ public class ExtractUtils {
 		dtos.forEach((name, dto) -> {
 			dto = extractData(dto).getManufacturer();
 			dto.getModels().forEach(model -> {
-				model = extractData(model).getModel();	
+				model = extractData(model).getModel();
+				model.getSubModels().forEach(subModel -> {
+					subModel = extractSubmodelData(subModel);
+					subModel.getModifications().forEach(modification -> {
+						modification = extractModificationData(modification);
+					});
+				});
 			});
 			System.out.println(dto);			
 		});
 						
 	}
 
+	private ModificationExctractDto extractModificationData(ModificationExctractDto dto) {
+		logger.debug("[ExtractService] - extractSubmodelData");
+		String line;
+		String name="";
+		String link="";
+		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(dto.getUrl()).openStream()))) {
+			while ((line = dis.readLine()) != null) {
+				// General information
+				// Body Features
+				// Engine Transmission
+				// Chassis
+				// Running Features
+				System.out.println(line);
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+
+		return dto;
+	}
+
+	private SubModelExtractDto extractSubmodelData(SubModelExtractDto dto) {
+		logger.debug("[ExtractService] - extractSubmodelData");
+		String line;
+		String name="";
+		String link="";
+		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(dto.getUrl()).openStream()))) {
+			while ((line = dis.readLine()) != null) {
+				line = line.trim();
+				if (line.trim().startsWith("<a href=\"/en/model/")) {
+					link = line.substring(line.indexOf("\"") + 1, line.indexOf("\">"));
+					if ((line = dis.readLine()) != null) {
+						name = line.trim();
+					}
+					ModificationExctractDto modificationDto = ModificationExctractDto
+															  .builder()
+															  .name(name)
+															  .url(mainUrl + link)
+															  .build();
+					if (dto.getModifications() == null) {
+						dto.setModifications(new ArrayList<>());
+					}
+					dto.getModifications().add(modificationDto);
+				}
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+
+		return dto;
+	}
+
 	private DtoPairs extractData(Extractable dto) {
-		logger.debug("[ExtractService] - extractManufacturerDetailsData");
+		logger.debug("[ExtractService] - extractData");
 		String line;
 		DtoPairs pair = null;
 		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(dto.getUrl()).openStream()))) {
@@ -62,16 +121,16 @@ public class ExtractUtils {
 	}
 
 	private ModelExtractDto fillModelData(ModelExtractDto dto, String name, String link) {
-		VariantExtractDto variant = VariantExtractDto
+		SubModelExtractDto variant = SubModelExtractDto
 				.builder()
 				.name(name)
 				.url(mainUrl + link)
 				.modifications(null)
 				.build();
-		if (dto.getVariants() == null) {
-			dto.setVariants(new ArrayList<>());
+		if (dto.getSubModels() == null) {
+			dto.setSubModels(new ArrayList<>());
 		}
-		dto.getVariants().add(variant);
+		dto.getSubModels().add(variant);
 		return dto;
 	}
 
@@ -80,7 +139,7 @@ public class ExtractUtils {
 				.builder()
 				.name(name)
 				.url(mainUrl + link)
-				.variants(null)
+				.subModels(null)
 				.build();
 		if (dto.getModels() == null) {
 			dto.setModels(new ArrayList<>());
@@ -97,9 +156,10 @@ public class ExtractUtils {
 		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(mainUrl).openStream()))) {
 			while ((line = dis.readLine()) != null) {
 				if (line.trim().startsWith("<a href=\"/en/models/")) {
-					String url = this.mainUrl + line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
+					String url = line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
 					String name = line.substring(line.indexOf(">") + 1, line.indexOf("<span"));
-					ManufacturerExtractDto dto = ManufacturerExtractDto.builder().name(name).url(url).build();
+					ManufacturerExtractDto dto = ManufacturerExtractDto.builder().name(name)
+							.url(mainUrl + url).build();
 					dtoMap.put(name, dto);
 				}
 			}

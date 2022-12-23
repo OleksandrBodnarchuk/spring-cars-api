@@ -10,6 +10,4 @@ import lombok.Setter;
 public class ModificationExctractDto {
 	private String name;
 	private String url;
-	private String mainImage;
-	
 }
