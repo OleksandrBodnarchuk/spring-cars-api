@@ -12,6 +12,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.alex.cars.dto.extract.DtoPairs;
+import pl.alex.cars.dto.extract.Extractable;
 import pl.alex.cars.dto.extract.ManufacturerExtractDto;
 import pl.alex.cars.dto.extract.ModelExtractDto;
 import pl.alex.cars.dto.extract.VariantExtractDto;
@@ -24,73 +26,71 @@ public class ExtractUtils {
 
 	public void extractAll() {
 		logger.debug("[ExtractService] - extractAll");
-		Map<String, ManufacturerExtractDto> dtos = extractManufacturersData();
+		Map<String, ManufacturerExtractDto> dtos = extractInitialData();
 		dtos.forEach((name, dto) -> {
-			dto = extractModelsData(dto);
+			dto = extractData(dto).getManufacturer();
 			dto.getModels().forEach(model -> {
-				model = extractVariantData(model);	
+				model = extractData(model).getModel();	
 			});
 			System.out.println(dto);			
 		});
 						
 	}
 
-	private ModelExtractDto extractVariantData(ModelExtractDto model) {
+	private DtoPairs extractData(Extractable dto) {
 		logger.debug("[ExtractService] - extractManufacturerDetailsData");
 		String line;
-		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(model.getUrl()).openStream()))) {
+		DtoPairs pair = null;
+		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(dto.getUrl()).openStream()))) {
 			while ((line = dis.readLine()) != null) {
 				line = line.trim();
 				if (line.trim().startsWith("<a title=\"")) {
 					String name = line.substring(line.indexOf("\"") + 1, line.indexOf("\" href=\""));
 					String link = line.substring(line.indexOf("/en/models/"), line.lastIndexOf("\""));
-					VariantExtractDto variant = VariantExtractDto
-							.builder()
-							.name(name)
-							.url(mainUrl + link)
-							.modifications(null)
-							.build();
-					if (model.getVariants() == null) {
-						model.setVariants(new ArrayList<>());
+					if (dto instanceof ManufacturerExtractDto) {
+						pair= new DtoPairs(fillManufacturerData((ManufacturerExtractDto) dto, name, link), null);	 
+					} else if (dto instanceof ModelExtractDto) {
+						pair = new DtoPairs(null, fillModelData((ModelExtractDto) dto, name, link));
 					}
-					model.getVariants().add(variant);
 				}
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
 
-		return model;
+		return pair;
 	}
 
-	private ManufacturerExtractDto extractModelsData(ManufacturerExtractDto dto) {
-		logger.debug("[ExtractService] - extractManufacturerDetailsData");
-		String line;
-		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(dto.getUrl()).openStream()))) {
-			while ((line = dis.readLine()) != null) {
-				if (line.trim().startsWith("<a title=\"")) {
-					String name = line.substring(line.indexOf("\"") + 1, line.indexOf("\" href=\""));
-					String link = line.substring(line.indexOf("/en/models/"), line.lastIndexOf("\""));
-					ModelExtractDto modelDto = ModelExtractDto
-							.builder()
-							.name(name)
-							.url(mainUrl + link)
-							.variants(null)
-							.build();
-					if (dto.getModels() == null) {
-						dto.setModels(new ArrayList<>());
-					}
-					dto.getModels().add(modelDto);
-				}
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+	private ModelExtractDto fillModelData(ModelExtractDto dto, String name, String link) {
+		VariantExtractDto variant = VariantExtractDto
+				.builder()
+				.name(name)
+				.url(mainUrl + link)
+				.modifications(null)
+				.build();
+		if (dto.getVariants() == null) {
+			dto.setVariants(new ArrayList<>());
 		}
+		dto.getVariants().add(variant);
+		return dto;
+	}
+
+	private ManufacturerExtractDto fillManufacturerData(ManufacturerExtractDto dto, String name, String link) {
+		ModelExtractDto modelDto = ModelExtractDto
+				.builder()
+				.name(name)
+				.url(mainUrl + link)
+				.variants(null)
+				.build();
+		if (dto.getModels() == null) {
+			dto.setModels(new ArrayList<>());
+		}
+		dto.getModels().add(modelDto);
 
 		return dto;
 	}
 
-	private Map<String, ManufacturerExtractDto> extractManufacturersData() {
+	private Map<String, ManufacturerExtractDto> extractInitialData() {
 		logger.debug("[ExtractService] - extractManufacturersData");
 		String line;
 		Map<String, ManufacturerExtractDto> dtoMap = new HashMap<>();

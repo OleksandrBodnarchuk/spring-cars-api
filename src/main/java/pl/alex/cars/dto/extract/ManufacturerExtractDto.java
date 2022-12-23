@@ -11,7 +11,7 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-public class ManufacturerExtractDto {
+public class ManufacturerExtractDto extends Extractable {
 
 	private String name;
 	private String url;

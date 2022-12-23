@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ModelExtractDto {
+public class ModelExtractDto extends Extractable {
 
 	private String name;
 	private String url;
