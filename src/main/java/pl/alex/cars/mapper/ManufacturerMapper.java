@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import pl.alex.cars.dto.ManufacturerDto;
-import pl.alex.cars.entity.Manufacturer;
+import pl.alex.cars.entity.Brand;
 
 @Mapper
 public interface ManufacturerMapper {

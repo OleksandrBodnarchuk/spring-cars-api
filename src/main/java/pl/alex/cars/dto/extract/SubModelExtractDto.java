@@ -13,6 +13,5 @@ public class SubModelExtractDto {
 
 	private String name;
 	private String url;
-	private String imageLink;
 	private List<ModificationExctractDto> modifications;
 }

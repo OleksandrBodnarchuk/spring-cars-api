@@ -7,19 +7,19 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import pl.alex.cars.dto.extract.ManufacturerExtractDto;
+import pl.alex.cars.dto.extract.BrandExtractDto;
 
 public class LinkUtilTest {
 
 	@Test
 	void testGetManufacturerDetailsFromLink() {
-		List<ManufacturerExtractDto> dtos = new ArrayList<>();
+		List<BrandExtractDto> dtos = new ArrayList<>();
 		String line = "<a href=\"/en/models/ac\" class=\"list-group-item\">AC<span class=\"badge\">16</span></a>";
 		String url = line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
 		assertTrue(url.equals("/en/models/ac"));
 		String name = line.substring(line.indexOf(">") + 1, line.indexOf("<span"));
 		assertTrue(name.equals("AC"));
-		ManufacturerExtractDto dto = ManufacturerExtractDto.builder().name(name).url(url).build();
+		BrandExtractDto dto = BrandExtractDto.builder().name(name).url(url).build();
 		dtos.add(dto);
 		assertTrue(!dtos.isEmpty());
 	}

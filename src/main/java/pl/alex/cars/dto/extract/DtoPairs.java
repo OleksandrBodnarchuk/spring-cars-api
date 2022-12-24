@@ -5,11 +5,12 @@ import lombok.Getter;
 @Getter
 public class DtoPairs {
 	
-	public final ManufacturerExtractDto manufacturer;
+	public final BrandExtractDto brand;
 	public final ModelExtractDto model;
 	
-	public <T extends Extractable, C extends Extractable> DtoPairs(T manufacturer, C model) {
-		this.manufacturer = (ManufacturerExtractDto) manufacturer;
-		this.model = (ModelExtractDto) model;
+	public DtoPairs(BrandExtractDto brand, ModelExtractDto model) {
+		this.brand = brand;
+		this.model = model;
 	}
+	
 }

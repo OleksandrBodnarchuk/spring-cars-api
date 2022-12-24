@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 import pl.alex.cars.dto.ManufacturerDto;
-import pl.alex.cars.entity.Manufacturer;
+import pl.alex.cars.entity.Brand;
 
 class MapperTest {
 

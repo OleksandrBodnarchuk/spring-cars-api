@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import pl.alex.cars.dto.ManufacturerDto;
 import pl.alex.cars.entity.Logo;
-import pl.alex.cars.entity.Manufacturer;
+import pl.alex.cars.entity.Brand;
 import pl.alex.cars.repository.LogoRepository;
 
 @Service

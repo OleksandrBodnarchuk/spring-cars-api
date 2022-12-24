@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import pl.alex.cars.entity.Manufacturer;
+import pl.alex.cars.entity.Brand;
 import pl.alex.cars.repository.ManufacturerRepository;
 
 //@ActiveProfiles("test")
