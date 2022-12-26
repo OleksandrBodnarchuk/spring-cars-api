@@ -1,15 +1,7 @@
 package pl.alex.cars.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.springframework.stereotype.Service;
 
-import pl.alex.cars.dto.ManufacturerDto;
-import pl.alex.cars.entity.Logo;
-import pl.alex.cars.entity.Brand;
-import pl.alex.cars.mapper.ManufacturerMapper;
 import pl.alex.cars.repository.ManufacturerRepository;
 
 @Service

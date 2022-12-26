@@ -1,14 +1,20 @@
-package pl.alex.cars.dto.extract.details;
+package pl.alex.cars.entity.details;
 
-import lombok.Builder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@Entity
 public class Engine {
-    private String displacement;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String displacement;
     private String kw;
     private String hp;
     private String torque;
