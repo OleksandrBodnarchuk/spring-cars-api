@@ -42,30 +42,30 @@ class ManufacturerControllerTest {
 				.build();
 	}
 
-	@Test
-	void when_SaveMultipleManufacturers_thenOK() throws Exception {
-		List<ManufacturerDto> dtos = Arrays.asList();
-		
-		when(manufacturerService.saveAllManufacturerDtos(dtos)).thenReturn(true);
-		
-		mockMvc.perform(post("/manufacturer/list")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(dtos)))
-		.andDo(print())
-		.andExpect(status().isOk());
-	}
-	
-	@Test
-	void when_SaveEmptyManufacturers_thenBadRequest() throws Exception {
-		List<ManufacturerDto> dtos = Arrays.asList();
-		
-		when(manufacturerService.saveAllManufacturerDtos(dtos)).thenReturn(false);
-		
-		mockMvc.perform(post("/manufacturer/list")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(dtos)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
+//	@Test
+//	void when_SaveMultipleManufacturers_thenOK() throws Exception {
+//		List<ManufacturerDto> dtos = Arrays.asList();
+//		
+//		when(manufacturerService.saveAllManufacturerDtos(dtos)).thenReturn(true);
+//		
+//		mockMvc.perform(post("/manufacturer/list")
+//				.contentType(MediaType.APPLICATION_JSON)
+//				.content(mapper.writeValueAsString(dtos)))
+//		.andDo(print())
+//		.andExpect(status().isOk());
+//	}
+//	
+//	@Test
+//	void when_SaveEmptyManufacturers_thenBadRequest() throws Exception {
+//		List<ManufacturerDto> dtos = Arrays.asList();
+//		
+//		when(manufacturerService.saveAllManufacturerDtos(dtos)).thenReturn(false);
+//		
+//		mockMvc.perform(post("/manufacturer/list")
+//				.contentType(MediaType.APPLICATION_JSON)
+//				.content(mapper.writeValueAsString(dtos)))
+//		.andDo(print())
+//		.andExpect(status().isBadRequest());
+//	}
 
 }

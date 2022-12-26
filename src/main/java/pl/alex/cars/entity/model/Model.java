@@ -2,7 +2,7 @@ package pl.alex.cars.entity.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.alex.cars.entity.Manufacturer;
+import pl.alex.cars.entity.Brand;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class Model {
 						   CascadeType.PERSIST, 
 						   CascadeType.REFRESH })
 	@JoinColumn(name = "manufacturer_id")
-	private Manufacturer manufacturer;
+	private Brand manufacturer;
 	
 	@OneToMany(mappedBy = "model", cascade = { CascadeType.DETACH, 
 			   CascadeType.MERGE, 

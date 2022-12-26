@@ -9,9 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ModelExtractDto extends Extractable {
+public class SubModelExtractDto {
 
 	private String name;
 	private String url;
-	private List<SubModelExtractDto> subModels;
+	private List<ModificationExctractDto> modifications;
 }

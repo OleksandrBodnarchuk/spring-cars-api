@@ -18,7 +18,7 @@ import pl.alex.cars.entity.model.Model;
 @Getter
 @Setter
 @Entity
-public class Manufacturer {
+public class Brand {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -49,7 +49,7 @@ public class Manufacturer {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Manufacturer other = (Manufacturer) obj;
+		Brand other = (Brand) obj;
 		return Objects.equals(id, other.id);
 	}
 }

@@ -23,12 +23,12 @@ public class ManufacturerController {
 		this.manufacturerService = manufacturerService;
 	}
 	
-	@PostMapping("/list")
-	public ResponseEntity<String> saveMultipleManufacturers(@RequestBody List<ManufacturerDto> dtos) {
-		if (manufacturerService.saveAllManufacturerDtos(dtos)) {
-			return ResponseEntity.ok("Saved");
-		} else {
-			return new ResponseEntity<String>("Not saved", HttpStatus.BAD_REQUEST);
-		}
-	}
+//	@PostMapping("/list")
+//	public ResponseEntity<String> saveMultipleManufacturers(@RequestBody List<ManufacturerDto> dtos) {
+//		if (manufacturerService.saveAllManufacturerDtos(dtos)) {
+//			return ResponseEntity.ok("Saved");
+//		} else {
+//			return new ResponseEntity<String>("Not saved", HttpStatus.BAD_REQUEST);
+//		}
+//	}
 }

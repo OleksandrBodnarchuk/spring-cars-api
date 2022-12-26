@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import pl.alex.cars.dto.ManufacturerDto;
 import pl.alex.cars.entity.Logo;
-import pl.alex.cars.entity.Manufacturer;
+import pl.alex.cars.entity.Brand;
 import pl.alex.cars.repository.LogoRepository;
 
 @Service
@@ -33,22 +33,22 @@ public class LogoService {
 		return saved;
 	}
 	
-	public void getLogoPictures() {
-		List<ManufacturerDto> dtos = manufacturerService.findAllManufacturers();
-		String path = "/spring-cars-api/src/main/resources/logos";
-		dtos.forEach(dto -> {
-			downloadImagesFromUrl(path, dto, MAIN_URL + dto.getValue() + ".jpg");
-		});
-	}
-
-	private void downloadImagesFromUrl(String path, ManufacturerDto dto, String carUrl) {
-		// DOWNLOADING
-		try (InputStream in = new URL(carUrl).openStream()) {
-			Logo saved = saveLogo(in, dto);
-			manufacturerService.saveDtoWithLogo(dto, saved);
-		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
-		}
-	}
+//	public void getLogoPictures() {
+//		List<ManufacturerDto> dtos = manufacturerService.findAllManufacturers();
+//		String path = "/spring-cars-api/src/main/resources/logos";
+//		dtos.forEach(dto -> {
+//			downloadImagesFromUrl(path, dto, MAIN_URL + dto.getValue() + ".jpg");
+//		});
+//	}
+//
+//	private void downloadImagesFromUrl(String path, ManufacturerDto dto, String carUrl) {
+//		// DOWNLOADING
+//		try (InputStream in = new URL(carUrl).openStream()) {
+//			Logo saved = saveLogo(in, dto);
+//			manufacturerService.saveDtoWithLogo(dto, saved);
+//		} catch (IOException ex) {
+//			System.out.println(ex.getMessage());
+//		}
+//	}
 	
 }

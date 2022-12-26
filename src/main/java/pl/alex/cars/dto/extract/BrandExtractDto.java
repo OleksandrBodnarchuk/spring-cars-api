@@ -5,13 +5,16 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder
-public class ModelExtractDto extends Extractable {
+@ToString
+public class BrandExtractDto extends Extractable {
 
 	private String name;
 	private String url;
-	private List<SubModelExtractDto> subModels;
+	private List<ModelExtractDto> models;
+	
 }
