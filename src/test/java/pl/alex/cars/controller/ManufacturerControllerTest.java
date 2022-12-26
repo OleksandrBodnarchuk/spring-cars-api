@@ -20,14 +20,14 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import pl.alex.cars.dto.ManufacturerDto;
-import pl.alex.cars.service.ManufacturerService;
+import pl.alex.cars.car.brand.BrandDto;
+import pl.alex.cars.car.brand.BrandService;
 
 @SpringBootTest
 class ManufacturerControllerTest {
 
 	@MockBean 
-	ManufacturerService manufacturerService;
+	BrandService manufacturerService;
 	
 	@Autowired
 	WebApplicationContext applicationContext;

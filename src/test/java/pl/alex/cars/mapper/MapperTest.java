@@ -9,11 +9,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import pl.alex.cars.dto.extract.BrandExtractDto;
-import pl.alex.cars.dto.extract.ModelExtractDto;
-import pl.alex.cars.dto.extract.ModificationExctractDto;
-import pl.alex.cars.dto.extract.SubModelExtractDto;
-import pl.alex.cars.entity.Brand;
+import pl.alex.cars.car.brand.Brand;
+import pl.alex.cars.car.brand.BrandMapper;
+import pl.alex.cars.car.brand.BrandMapperImpl;
+import pl.alex.cars.extract.dto.BrandExtractDto;
+import pl.alex.cars.extract.dto.ModelExtractDto;
+import pl.alex.cars.extract.dto.ModificationExctractDto;
+import pl.alex.cars.extract.dto.SubModelExtractDto;
 
 @ExtendWith(SpringExtension.class) // JUnit 5
 @ContextConfiguration(classes = { BrandMapperImpl.class })

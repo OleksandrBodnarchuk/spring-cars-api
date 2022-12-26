@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import pl.alex.cars.dto.extract.BrandExtractDto;
+import pl.alex.cars.extract.dto.BrandExtractDto;
 
 public class LinkUtilTest {
 

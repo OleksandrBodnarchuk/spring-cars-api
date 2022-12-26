@@ -1,0 +1,18 @@
+package pl.alex.cars.extract;
+
+import lombok.Getter;
+import pl.alex.cars.extract.dto.BrandExtractDto;
+import pl.alex.cars.extract.dto.ModelExtractDto;
+
+@Getter
+public class DtoPairs {
+	
+	public final BrandExtractDto brand;
+	public final ModelExtractDto model;
+	
+	public DtoPairs(BrandExtractDto brand, ModelExtractDto model) {
+		this.brand = brand;
+		this.model = model;
+	}
+	
+}
