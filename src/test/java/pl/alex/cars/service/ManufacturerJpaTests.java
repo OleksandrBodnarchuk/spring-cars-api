@@ -17,7 +17,7 @@ import pl.alex.cars.entity.Brand;
 import pl.alex.cars.repository.ManufacturerRepository;
 
 //@ActiveProfiles("test")
-@DataJpaTest
+//@DataJpaTest
 public class ManufacturerJpaTests {
 //
 //	@Nested

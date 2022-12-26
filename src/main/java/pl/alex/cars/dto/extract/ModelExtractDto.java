@@ -13,5 +13,5 @@ public class ModelExtractDto extends Extractable {
 
 	private String name;
 	private String url;
-	private List<SubModelExtractDto> subModels;
+	private List<SubModelExtractDto> submodels;
 }

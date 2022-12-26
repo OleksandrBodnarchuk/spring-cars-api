@@ -1,4 +1,4 @@
-package pl.alex.cars.entity.model;
+package pl.alex.cars.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -30,7 +30,7 @@ public class Picture {
 			   CascadeType.MERGE, 
 			   CascadeType.PERSIST, 
 			   CascadeType.REFRESH })
-	@JoinColumn(name = "model_id")
-	private Model model;
+	@JoinColumn(name = "modification_id")
+	private Modification modification;
 
 }

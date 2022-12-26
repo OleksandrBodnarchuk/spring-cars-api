@@ -3,10 +3,10 @@ package pl.alex.cars.dto.extract;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import pl.alex.cars.dto.extract.details.Body;
-import pl.alex.cars.dto.extract.details.Chasis;
-import pl.alex.cars.dto.extract.details.Engine;
-import pl.alex.cars.dto.extract.details.RunningFeature;
+import pl.alex.cars.dto.extract.details.BodyExtractDto;
+import pl.alex.cars.dto.extract.details.ChasisExtractDto;
+import pl.alex.cars.dto.extract.details.EngineExtractDto;
+import pl.alex.cars.dto.extract.details.RunningFeatureExtractDto;
 
 @Getter
 @Setter
@@ -16,8 +16,8 @@ public class ModificationExctractDto {
 	private String name;
 	private String url;
 	private GeneralInfo generalInfo;
-	private Body body;
-	private Engine engine;
-	private Chasis chasis;
-	private RunningFeature runningFeature;
+	private BodyExtractDto body;
+	private EngineExtractDto engine;
+	private ChasisExtractDto chasis;
+	private RunningFeatureExtractDto runningFeature;
 }

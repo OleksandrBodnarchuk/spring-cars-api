@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Chasis {
+public class ChasisExtractDto {
 	private String abs;
 	private String frontBrakes;
 	private String rearBrakes;

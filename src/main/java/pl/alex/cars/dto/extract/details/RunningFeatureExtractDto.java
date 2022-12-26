@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class RunningFeature {
+public class RunningFeatureExtractDto {
 
 	private String maxSpeed;
 	private String acceleration;

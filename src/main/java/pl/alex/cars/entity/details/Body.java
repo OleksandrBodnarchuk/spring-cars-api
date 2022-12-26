@@ -1,13 +1,19 @@
-package pl.alex.cars.dto.extract.details;
+package pl.alex.cars.entity.details;
 
-import lombok.Builder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
+@Entity
 public class Body {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
     private String length;
     private String width;
     private String height;

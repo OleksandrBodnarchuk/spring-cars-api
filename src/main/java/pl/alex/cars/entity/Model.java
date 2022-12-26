@@ -1,8 +1,7 @@
-package pl.alex.cars.entity.model;
+package pl.alex.cars.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.alex.cars.entity.Brand;
 
 import java.util.List;
 
@@ -14,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 
 @Getter
 @Setter
@@ -29,13 +29,22 @@ public class Model {
 						   CascadeType.MERGE, 
 						   CascadeType.PERSIST, 
 						   CascadeType.REFRESH })
-	@JoinColumn(name = "manufacturer_id")
-	private Brand manufacturer;
+	@JoinColumn(name = "brand_id")
+	private Brand brand;
 	
 	@OneToMany(mappedBy = "model", cascade = { CascadeType.DETACH, 
 			   CascadeType.MERGE, 
 			   CascadeType.PERSIST,
 			   CascadeType.REFRESH })
-	private List<Picture> pictures;
+	private List<SubModel> submodels;
+	
+	@Transient
+	private String url;
+	
+//	@OneToMany(mappedBy = "model", cascade = { CascadeType.DETACH, 
+//			   CascadeType.MERGE, 
+//			   CascadeType.PERSIST,
+//			   CascadeType.REFRESH })
+//	private List<Picture> pictures;
 
 }

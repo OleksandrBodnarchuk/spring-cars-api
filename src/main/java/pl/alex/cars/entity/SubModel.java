@@ -9,8 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,23 +18,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Brand {
+public class SubModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 
-	@OneToMany(mappedBy = "brand", cascade = { CascadeType.DETACH, 
-								   CascadeType.MERGE, 
-								   CascadeType.PERSIST,
-								   CascadeType.REFRESH })
-	private List<Model> models;
+	@ManyToOne(cascade = { CascadeType.DETACH, 
+						   CascadeType.MERGE, 
+						   CascadeType.PERSIST, 
+						   CascadeType.REFRESH })
+	@JoinColumn(name = "model_id")
+	private Model model;
+
+	@OneToMany(mappedBy = "submodel", cascade = { CascadeType.DETACH, 
+			CascadeType.MERGE, 
+			CascadeType.PERSIST,
+			CascadeType.REFRESH })
+	private List<Modification> modifications;
 	
 	@Transient
-	private String url; 
-//	@OneToOne(cascade = CascadeType.ALL)
-//	@JoinColumn(name = "logo_id")
-//	private Logo logo;
+	private String url;
 	
 	@Override
 	public int hashCode() {
@@ -49,7 +53,7 @@ public class Brand {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Brand other = (Brand) obj;
+		SubModel other = (SubModel) obj;
 		return Objects.equals(id, other.id);
 	}
 }

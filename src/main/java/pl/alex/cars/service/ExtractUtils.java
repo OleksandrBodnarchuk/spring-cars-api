@@ -19,10 +19,10 @@ import pl.alex.cars.dto.extract.GeneralInfo;
 import pl.alex.cars.dto.extract.ModelExtractDto;
 import pl.alex.cars.dto.extract.ModificationExctractDto;
 import pl.alex.cars.dto.extract.SubModelExtractDto;
-import pl.alex.cars.dto.extract.details.Body;
-import pl.alex.cars.dto.extract.details.Chasis;
-import pl.alex.cars.dto.extract.details.Engine;
-import pl.alex.cars.dto.extract.details.RunningFeature;
+import pl.alex.cars.dto.extract.details.BodyExtractDto;
+import pl.alex.cars.dto.extract.details.ChasisExtractDto;
+import pl.alex.cars.dto.extract.details.EngineExtractDto;
+import pl.alex.cars.dto.extract.details.RunningFeatureExtractDto;
 
 public class ExtractUtils {
 
@@ -42,8 +42,8 @@ public class ExtractUtils {
 				for(ModelExtractDto model: brand.getModels()) {
 					model = extractSubModelData(model);
 //					model = extractData(model).getModel();
-					if (model.getSubModels() != null) {
-						for (SubModelExtractDto subModel : model.getSubModels()) {
+					if (model.getSubmodels() != null) {
+						for (SubModelExtractDto subModel : model.getSubmodels()) {
 							subModel = extractModificationData(subModel);
 							for (ModificationExctractDto modification : subModel.getModifications()) {
 								modification = fillSubModelModificationData(modification);
@@ -267,7 +267,7 @@ public class ExtractUtils {
 					.seats(seats)
 					.build());
 			// Body Features
-			dto.setBody(Body.builder()
+			dto.setBody(BodyExtractDto.builder()
 					.length(length)
 					.width(width)
 					.height(height)
@@ -277,7 +277,7 @@ public class ExtractUtils {
 					.bootCapacity(bootCapacity)
 					.build());
 			// Engine Transmission
-			dto.setEngine(Engine.builder()
+			dto.setEngine(EngineExtractDto.builder()
 					.displacement(displacement)
 					.kw(kw)
 				    .hp(hp)
@@ -292,7 +292,7 @@ public class ExtractUtils {
 				    .ecoStandart(ecoStandart)
 					.build());
 			// Chassis
-			dto.setChasis(Chasis.builder()
+			dto.setChasis(ChasisExtractDto.builder()
 					.abs(abs)
 					.frontBrakes(frontBrakes)
 					.rearBrakes(rearBrakes)
@@ -300,7 +300,7 @@ public class ExtractUtils {
 					.wheels(wheels)
 					.build());
 			// Running Features
-			dto.setRunningFeature(RunningFeature.builder()
+			dto.setRunningFeature(RunningFeatureExtractDto.builder()
 					.maxSpeed(maxSpeed)
 					.acceleration(acceleration)
 					.fuelTown(fuelTown)
@@ -395,10 +395,10 @@ public class ExtractUtils {
 				.url(mainUrl + link)
 				.modifications(new ArrayList<>())
 				.build();
-		if (dto.getSubModels() == null) {
-			dto.setSubModels(new ArrayList<>());
+		if (dto.getSubmodels() == null) {
+			dto.setSubmodels(new ArrayList<>());
 		}
-		dto.getSubModels().add(subModel);
+		dto.getSubmodels().add(subModel);
 		return dto;
 	}
 
@@ -407,7 +407,7 @@ public class ExtractUtils {
 				.builder()
 				.name(name)
 				.url(mainUrl + link)
-				.subModels(null)
+				.submodels(null)
 				.build();
 		if (dto.getModels() == null) {
 			dto.setModels(new ArrayList<>());
