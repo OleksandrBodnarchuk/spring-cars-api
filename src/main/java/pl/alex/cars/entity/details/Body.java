@@ -4,8 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
+import pl.alex.cars.entity.Modification;
 
 @Getter
 @Setter
@@ -22,5 +24,6 @@ public class Body {
     private String maxWidth;
     private String bootCapacity;
     
-
+	@OneToOne(mappedBy = "body")
+	private Modification modification;
 }
