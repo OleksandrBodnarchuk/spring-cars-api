@@ -1,5 +1,7 @@
 package pl.alex.cars.car.body;
 
-public class BodyRepository {
+import org.springframework.data.repository.CrudRepository;
+
+public interface BodyRepository extends CrudRepository<Body, Long>{
 
 }

@@ -11,7 +11,36 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import jakarta.transaction.Transactional;
+import pl.alex.cars.car.body.Body;
+import pl.alex.cars.car.body.BodyMapper;
+import pl.alex.cars.car.body.BodyRepository;
+import pl.alex.cars.car.brand.Brand;
+import pl.alex.cars.car.brand.BrandMapper;
+import pl.alex.cars.car.brand.BrandRepository;
+import pl.alex.cars.car.chasis.Chasis;
+import pl.alex.cars.car.chasis.ChasisMapper;
+import pl.alex.cars.car.chasis.ChasisRepository;
+import pl.alex.cars.car.engine.Engine;
+import pl.alex.cars.car.engine.EngineMapper;
+import pl.alex.cars.car.engine.EngineRepository;
+import pl.alex.cars.car.info.GeneralInfo;
+import pl.alex.cars.car.info.GeneralInfoMapper;
+import pl.alex.cars.car.info.GeneralInfoRepository;
+import pl.alex.cars.car.model.Model;
+import pl.alex.cars.car.model.ModelMapper;
+import pl.alex.cars.car.model.ModelRepository;
+import pl.alex.cars.car.modification.Modification;
+import pl.alex.cars.car.modification.ModificationMapper;
+import pl.alex.cars.car.modification.ModificationRepository;
+import pl.alex.cars.car.running.RunningFeature;
+import pl.alex.cars.car.running.RunningFeatureRepository;
+import pl.alex.cars.car.running.RunningFeaturesMapper;
+import pl.alex.cars.car.submodel.SubModel;
+import pl.alex.cars.car.submodel.SubModelMapper;
+import pl.alex.cars.car.submodel.SubModelRepository;
 import pl.alex.cars.extract.dto.BodyExtractDto;
 import pl.alex.cars.extract.dto.BrandExtractDto;
 import pl.alex.cars.extract.dto.ChasisExtractDto;
@@ -22,13 +51,38 @@ import pl.alex.cars.extract.dto.ModificationExctractDto;
 import pl.alex.cars.extract.dto.RunningFeatureExtractDto;
 import pl.alex.cars.extract.dto.SubModelExtractDto;
 
+@Component
 public class ExtractUtils {
 
 	Logger logger = LoggerFactory.getLogger(ExtractUtils.class);
+	private final ModelRepository modelRepository;
+	private final ModificationRepository modificationRepository;
+	private final SubModelRepository subModelRepository;
+	private final BrandRepository brandRepository;
+	private final GeneralInfoRepository generalInfoRepository;
+	private final BodyRepository bodyRepository;
+	private final EngineRepository engineRepository;
+	private final ChasisRepository chasisRepository;
+	private final RunningFeatureRepository runningFeatureRepository;
+	
+	public ExtractUtils(ModelRepository modelRepository, ModificationRepository modificationRepository,
+			SubModelRepository subModelRepository, BrandRepository brandRepository, EngineRepository engineRepository,
+			BodyRepository bodyRepository, ChasisRepository chasisRepository,
+			RunningFeatureRepository runningFeatureRepository, GeneralInfoRepository generalInfoRepository) {
+		this.modelRepository = modelRepository;
+		this.modificationRepository = modificationRepository;
+		this.subModelRepository = subModelRepository;
+		this.brandRepository = brandRepository;
+		this.generalInfoRepository = generalInfoRepository;
+		this.bodyRepository = bodyRepository;
+		this.engineRepository = engineRepository;
+		this.chasisRepository = chasisRepository;
+		this.runningFeatureRepository = runningFeatureRepository;
+	}
 
-	private String mainUrl = "https://car-info.com";
+	private String mainUrl = "";
 
-	public List<BrandExtractDto> extractAll() {
+	public void extractAll() {
 		logger.debug("[ExtractService] - extractAll");
 		List<BrandExtractDto> dtos = null;
 		try {
@@ -37,15 +91,42 @@ public class ExtractUtils {
 //			DtoPairs pair;
 			for(BrandExtractDto brand : dtos) {
 //				brand = extractData(brand).getBrand();
+				Brand brandEntity = brandRepository.save(BrandMapper.INSTANCE.convertToEntity(brand));
 				brand = extractBrandModelData(brand);
 				for(ModelExtractDto model: brand.getModels()) {
+					Model modelEntity = ModelMapper.INSTANCE.convertToEntity(model);
+					modelEntity.setBrand(brandEntity);
+					modelEntity = modelRepository.save(modelEntity);
 					model = extractSubModelData(model);
 //					model = extractData(model).getModel();
 					if (model.getSubmodels() != null) {
 						for (SubModelExtractDto subModel : model.getSubmodels()) {
+							SubModel subModelEntity = SubModelMapper.INSTANCE.convertToEntity(subModel);
+							subModelEntity.setModel(modelEntity);
+							subModelEntity = subModelRepository.save(subModelEntity);
 							subModel = extractModificationData(subModel);
 							for (ModificationExctractDto modification : subModel.getModifications()) {
+								Modification modificationEntity = ModificationMapper.INSTANCE.convertToEntity(modification);
+								modificationEntity.setSubmodel(subModelEntity);
+								modificationEntity = modificationRepository.save(modificationEntity);
 								modification = fillSubModelModificationData(modification);
+								GeneralInfo generalInfo = GeneralInfoMapper.INSTANCE.convertToEntity(modification.getGeneralInfo());
+								generalInfo = generalInfoRepository.save(generalInfo);
+								Body body = BodyMapper.INSTANCE.convertToEntity(modification.getBody());
+								body = bodyRepository.save(body);
+								Engine engine = EngineMapper.INSTANCE.convertToEntity(modification.getEngine());
+								engine = engineRepository.save(engine);
+								Chasis chasis = ChasisMapper.INSTANCE.convertToEntity(modification.getChasis());
+								chasis = chasisRepository.save(chasis);
+								RunningFeature runningFeature = RunningFeaturesMapper.INSTANCE.convertToEntity(modification.getRunningFeature());
+								runningFeature = runningFeatureRepository.save(runningFeature);
+								
+								modificationEntity.setBody(body);
+								modificationEntity.setChasis(chasis);
+								modificationEntity.setEngine(engine);
+								modificationEntity.setGeneralInfo(generalInfo);
+								modificationEntity.setRunningFeature(runningFeature);
+								modificationRepository.save(modificationEntity);
 							}
 						}
 					}
@@ -54,13 +135,12 @@ public class ExtractUtils {
 			long endTime = System.nanoTime();
 			long milliseconds = (endTime - startTime) / 1000000;
 			long duration = (milliseconds / 1000) % 60;
-			System.out.println("Extraction Done! - " + duration);
+			System.out.println("Extraction Done! - " + duration + " seconds.");
 			
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
 		
-		return dtos;
 	}
 
 	private SubModelExtractDto extractModificationData(SubModelExtractDto subModel) {
@@ -161,9 +241,16 @@ public class ExtractUtils {
 					doors = checkModificationData(line);
 				} else if (startWith(line, "<td class=\"property\">Seats</td>")) {
 					line = dis.readLine().trim();
-					doors = checkModificationData(line);
+					seats = checkModificationData(line);
 				}
-				// Body Features
+				/* Body Features */
+				//: TODO: Length make as integer
+				//: TODO: Width make as integer
+				//: TODO: Height make as integer
+				//: TODO: Wheelbase make as integer
+				//: TODO: Weight make as integer
+				//: TODO: Max width make as integer
+				//: TODO: Boot capacity make as integer
 				else if (startWith(line, "<td class=\"property\">Length</td>")) {
 					line = dis.readLine().trim();
 					length = checkModificationData(line);
@@ -186,7 +273,12 @@ public class ExtractUtils {
 					line = dis.readLine().trim();
 					bootCapacity = checkModificationData(line);
 				}
-				// Engine Transmission
+				/* Engine Transmission */
+				// TODO: make fuelSupply as Enum
+				// TODO: set torque as Integer (337 N*m/rpm)
+				// TODO: set kw & hp as Integer
+				// TODO: set Cylinders diameter to double
+				// TODO: set Fuel capacity to double
 				else if (startWith(line, "<td class=\"property\">Engine kw</td>")) {
 					line = dis.readLine().trim();
 					kw = checkModificationData(line);
@@ -238,7 +330,10 @@ public class ExtractUtils {
 					line = dis.readLine().trim();
 					wheels = checkModificationData(line);
 				}
-				// Running features
+				/* Running Features */
+				// TODO: set Max speed to double
+				// TODO: set Acceleration to double
+				// TODO: set Fuel town, Fuel road, Fuel average
 				else if (startWith(line, "<td class=\"property\">Max speed</td>")) {
 					line = dis.readLine().trim();
 					maxSpeed = checkModificationData(line);
@@ -316,7 +411,12 @@ public class ExtractUtils {
 	}
 
 	private String checkModificationData(String line) {
-		return line.substring(line.indexOf(">") + 1, line.lastIndexOf("<"));
+		String substring = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<"));
+		if (substring.trim().equals("-")) {
+			return null;
+		} else {
+			return substring;
+		}
 	}
 
 	private boolean startWith(String line, String part) {
@@ -422,21 +522,24 @@ public class ExtractUtils {
 		logger.debug("[ExtractService] - extractManufacturersData");
 		String line;
 		List<BrandExtractDto> dtoList = new LinkedList<>();
-		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(mainUrl).openStream()))) {
-			while ((line = dis.readLine()) != null) {
-				if (line.trim().startsWith("<a href=\"/en/models/")) {
-					String url = line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
-					String name = line.substring(line.indexOf(">") + 1, line.indexOf("<span"));
-					BrandExtractDto dto = BrandExtractDto.builder().name(name)
-							.url(mainUrl + url).build();
-					dtoList.add(dto);
-				}
-			}
-		} catch (MalformedURLException mue) {
-			mue.printStackTrace();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
+//		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(mainUrl).openStream()))) {
+//			while ((line = dis.readLine()) != null) {
+//				if (line.trim().startsWith("<a href=\"/en/models/")) {
+//					String url = line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
+//					String name = line.substring(line.indexOf(">") + 1, line.indexOf("<span"));
+//					BrandExtractDto dto = BrandExtractDto.builder().name(name)
+//							.url(mainUrl + url).build();
+//					dtoList.add(dto);
+//				}
+//			}
+//		} catch (MalformedURLException mue) {
+//			mue.printStackTrace();
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		}
+		BrandExtractDto dto = BrandExtractDto.builder().name("hummer")
+				.url(mainUrl).build();
+		dtoList.add(dto);
 		return dtoList;
 	}
 

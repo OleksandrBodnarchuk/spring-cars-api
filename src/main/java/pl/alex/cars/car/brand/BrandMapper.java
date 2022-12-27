@@ -1,5 +1,6 @@
 package pl.alex.cars.car.brand;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,7 @@ public interface BrandMapper {
 
 	@Named("modelsDtoToList")
 	public static List<Model> inchToCentimeter(List<ModelExtractDto> dtos) {
-		List<Model> models = dtos.stream().map(ModelMapper.INSTANCE::convertToEntity).collect(Collectors.toList());
-		return models;
+//		List<Model> models = dtos.stream().map(ModelMapper.INSTANCE::convertToEntity).collect(Collectors.toList());
+		return new ArrayList<>();
 	}
 }

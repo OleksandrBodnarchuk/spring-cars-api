@@ -1,5 +1,7 @@
 package pl.alex.cars.car.engine;
 
-public interface EngineRepository {
+import org.springframework.data.repository.CrudRepository;
+
+public interface EngineRepository extends CrudRepository<Engine, Long>{
 
 }

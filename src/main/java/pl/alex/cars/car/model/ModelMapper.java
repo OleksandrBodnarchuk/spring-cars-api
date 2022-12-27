@@ -1,5 +1,6 @@
 package pl.alex.cars.car.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public interface ModelMapper {
 	
 	@Named("submodelsDtoToList")
 	public static List<SubModel> inchToCentimeter(List<SubModelExtractDto> dtos) {
-		List<SubModel> submodels = dtos.stream().map(SubModelMapper.INSTANCE::convertToEntity).collect(Collectors.toList());
-		return submodels;
+//		List<SubModel> submodels = dtos.stream().map(SubModelMapper.INSTANCE::convertToEntity).collect(Collectors.toList());
+		return new ArrayList<>();
 	}
 }

@@ -1,5 +1,7 @@
 package pl.alex.cars.car.info;
 
-public interface GeneralInfoRepository {
+import org.springframework.data.repository.CrudRepository;
+
+public interface GeneralInfoRepository extends CrudRepository<GeneralInfo, Long>{
 
 }
