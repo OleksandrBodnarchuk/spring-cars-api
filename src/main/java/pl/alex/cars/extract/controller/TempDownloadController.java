@@ -1,4 +1,4 @@
-package pl.alex.cars.api.controller;
+package pl.alex.cars.extract.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
