@@ -1,35 +1,37 @@
 package pl.alex.cars.car.brand;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import pl.alex.cars.mapper.BrandMapper;
+import pl.alex.cars.utils.CommonUtils;
 
 @Service
 public class BrandService {
 
-	private final BrandRepository manufacturerRepository;
+	private final BrandRepository brandRepository;
 
-	public BrandService(BrandRepository manufacturerRepository) {
-		this.manufacturerRepository = manufacturerRepository;
+	public BrandService(BrandRepository brandRepository) {
+		this.brandRepository = brandRepository;
 	}
 
-//	public boolean saveAllManufacturerDtos(List<ManufacturerDto> dtos) {
-//		List<Manufacturer> manufacturers = dtos.stream().map(ManufacturerMapper.INSTANCE::convertToEntity)
-//				.collect(Collectors.toList());
-//		manufacturerRepository.saveAll(manufacturers);
-//		return !manufacturers.isEmpty();
-//	}
-//
-//	public List<ManufacturerDto> findAllManufacturers() {
-//		// TODO: add checks for null
-//		return manufacturerRepository.findAll().stream().map(ManufacturerMapper.INSTANCE::convertToDto)
-//				.collect(Collectors.toList());
-//	}
-//
-//	public void saveDtoWithLogo(ManufacturerDto dto, Logo logo) {
-//		if(dto!=null) {
-//			Manufacturer entity = ManufacturerMapper.INSTANCE.convertToEntity(dto);
-//			entity.setLogo(logo);
-//			manufacturerRepository.save(entity);
-//		}
-//	}
-
+	public Page<BrandResponse> findAllBrands(BrandRequest brandRequest) {
+		Pageable pageable = CommonUtils.createPageable(brandRequest);
+		int ordinal = brandRequest.getOrdinal();
+		Page<Brand> brands = brandRepository.findAll(pageable);
+		List<BrandResponse> dtos = new ArrayList<>();
+		for (Brand brand : brands) {
+			BrandResponse dto = BrandMapper.INSTANSE.convertToDto(brand);
+			dto.setOrdinal(ordinal);
+			ordinal++;
+			dtos.add(dto);
+		}
+		return new PageImpl<>(dtos, brands.getPageable(), brands.getTotalElements());
+	}
+	
 }

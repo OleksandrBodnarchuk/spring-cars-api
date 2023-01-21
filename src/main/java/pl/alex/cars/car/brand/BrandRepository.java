@@ -1,7 +1,7 @@
 package pl.alex.cars.car.brand;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface BrandRepository extends JpaRepository<Brand, Long> {
+public interface BrandRepository extends PagingAndSortingRepository<Brand, Long> {
 
 }

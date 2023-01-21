@@ -1,26 +1,24 @@
 package pl.alex.cars.utils;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 public class CommonUtils {
 
-	public static Integer convertFieldToInteger(String input) {
-		if (input == null || input.trim().equals("-")) {
-			return null;
-		} else {
-			String[] parts = input.split(" ");
-			if(parts[0].isBlank()) {
-				return null;
-			}
-			return Integer.valueOf(parts[0]);
-		}
+	public static Pageable createPageable(CarPageable pageable) {
+		return createPageable(pageable, Sort.by("name"));
 	}
 
-	public static Double convertFieldToDouble(String input) {
-		if (input == null || input.trim().equals("-")) {
-			return null;
-		} else {
-			String[] parts = input.split(" ");
-			
-			return Double.valueOf(parts[0].replaceAll(",", "."));
+	public static Pageable createPageable(CarPageable pageable, Sort sort) {
+		if(pageable.getPageNumber() == null) {
+			pageable.setPageNumber(0);
 		}
+		if(pageable.getPageSize() == null || pageable.getPageSize() > 20) {
+			pageable.setPageSize(20);
+		}
+		// TODO: exceptions if page number < 0 || page size <= 0 
+		return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 	}
+
 }
