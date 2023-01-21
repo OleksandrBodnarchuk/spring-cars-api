@@ -2,6 +2,7 @@ package pl.alex.cars.extract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,9 +12,9 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import jakarta.transaction.Transactional;
 import pl.alex.cars.car.body.Body;
 import pl.alex.cars.car.body.BodyMapper;
 import pl.alex.cars.car.body.BodyRepository;
@@ -26,6 +27,8 @@ import pl.alex.cars.car.chasis.ChasisRepository;
 import pl.alex.cars.car.engine.Engine;
 import pl.alex.cars.car.engine.EngineMapper;
 import pl.alex.cars.car.engine.EngineRepository;
+import pl.alex.cars.car.file.Picture;
+import pl.alex.cars.car.file.PictureRepository;
 import pl.alex.cars.car.info.GeneralInfo;
 import pl.alex.cars.car.info.GeneralInfoMapper;
 import pl.alex.cars.car.info.GeneralInfoRepository;
@@ -64,11 +67,13 @@ public class ExtractUtils {
 	private final EngineRepository engineRepository;
 	private final ChasisRepository chasisRepository;
 	private final RunningFeatureRepository runningFeatureRepository;
+	private final PictureRepository pictureRepository;
 	
 	public ExtractUtils(ModelRepository modelRepository, ModificationRepository modificationRepository,
 			SubModelRepository subModelRepository, BrandRepository brandRepository, EngineRepository engineRepository,
 			BodyRepository bodyRepository, ChasisRepository chasisRepository,
-			RunningFeatureRepository runningFeatureRepository, GeneralInfoRepository generalInfoRepository) {
+			RunningFeatureRepository runningFeatureRepository, GeneralInfoRepository generalInfoRepository,
+			PictureRepository pictureRepository) {
 		this.modelRepository = modelRepository;
 		this.modificationRepository = modificationRepository;
 		this.subModelRepository = subModelRepository;
@@ -78,10 +83,13 @@ public class ExtractUtils {
 		this.engineRepository = engineRepository;
 		this.chasisRepository = chasisRepository;
 		this.runningFeatureRepository = runningFeatureRepository;
+		this.pictureRepository = pictureRepository;
 	}
 
-	private String mainUrl = "";
+	@Value("${main.url}")
+	private String mainUrl;
 
+//	@Transactional
 	public void extractAll() {
 		logger.debug("[ExtractService] - extractAll");
 		List<BrandExtractDto> dtos = null;
@@ -110,6 +118,15 @@ public class ExtractUtils {
 								modificationEntity.setSubmodel(subModelEntity);
 								modificationEntity = modificationRepository.save(modificationEntity);
 								modification = fillSubModelModificationData(modification);
+								String imageLink = modification.getImageLink();
+								if(imageLink!=null) {
+									Picture picture = extractPicture(imageLink);
+									picture.setName(model.getName());
+									picture.setModification(modificationEntity);
+									picture = pictureRepository.save(picture);
+									modificationEntity.setPicture(picture);
+								}
+								
 								GeneralInfo generalInfo = GeneralInfoMapper.INSTANCE.convertToEntity(modification.getGeneralInfo());
 								generalInfo = generalInfoRepository.save(generalInfo);
 								Body body = BodyMapper.INSTANCE.convertToEntity(modification.getBody());
@@ -137,10 +154,24 @@ public class ExtractUtils {
 			long duration = (milliseconds / 1000) % 60;
 			System.out.println("Extraction Done! - " + duration + " seconds.");
 			
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | MalformedURLException e) {
 			e.printStackTrace();
 		}
 		
+	}
+
+	private Picture extractPicture(String link) throws MalformedURLException {
+		URL url = new URL(link);
+		try (InputStream is = url.openStream()) {
+			Picture picture = new Picture();
+			picture.setData(is.readAllBytes());
+			picture.setMainPicture(true);
+			return picture;
+		} catch (IOException e) {
+			System.err.printf("Failed while reading bytes from %s: %s", url.toExternalForm(), e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private SubModelExtractDto extractModificationData(SubModelExtractDto subModel) {
@@ -218,135 +249,125 @@ public class ExtractUtils {
 				
 				line=line.trim();
 				if(line.contains("style=\"background-image:")) {
-					imageLink = line; //TODO: fix image link
+					if(line.contains("/build/images/no_img.jpg")) {
+						imageLink=null;
+					} else {
+						imageLink = line.substring(line.indexOf("(")+1, line.lastIndexOf(")"));
+					}
 				}
 				// General Info.
-				else if (startWith(line, "<td class=\"property\">Year</td>")) {
+				else if (lineIsEquals(line, "<td class=\"property\">Year</td>")) {
 					line = dis.readLine().trim();
 					year = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Brand</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Brand</td>")) {
 					line = dis.readLine().trim();
 					brand = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Engine</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Engine</td>")) {
 					line = dis.readLine().trim();
 					displacement = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Body type</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Body type</td>")) {
 					line = dis.readLine().trim();
 					bodyType = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Model</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Model</td>")) {
 					line = dis.readLine().trim();
 					model = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Doors</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Doors</td>")) {
 					line = dis.readLine().trim();
 					doors = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Seats</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Seats</td>")) {
 					line = dis.readLine().trim();
 					seats = checkModificationData(line);
 				}
 				/* Body Features */
-				//: TODO: Length make as integer
-				//: TODO: Width make as integer
-				//: TODO: Height make as integer
-				//: TODO: Wheelbase make as integer
-				//: TODO: Weight make as integer
-				//: TODO: Max width make as integer
-				//: TODO: Boot capacity make as integer
-				else if (startWith(line, "<td class=\"property\">Length</td>")) {
+				else if (lineIsEquals(line, "<td class=\"property\">Length</td>")) {
 					line = dis.readLine().trim();
 					length = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Width</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Width</td>")) {
 					line = dis.readLine().trim();
 					width = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Height</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Height</td>")) {
 					line = dis.readLine().trim();
 					height = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Wheelbase</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Wheelbase</td>")) {
 					line = dis.readLine().trim();
 					wheelBase = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Weight</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Weight</td>")) {
 					line = dis.readLine().trim();
 					weight = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Max width</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Max width</td>")) {
 					line = dis.readLine().trim();
 					maxWidth = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Boot capacity</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Boot capacity</td>")) {
 					line = dis.readLine().trim();
 					bootCapacity = checkModificationData(line);
 				}
 				/* Engine Transmission */
 				// TODO: make fuelSupply as Enum
-				// TODO: set torque as Integer (337 N*m/rpm)
-				// TODO: set kw & hp as Integer
-				// TODO: set Cylinders diameter to double
-				// TODO: set Fuel capacity to double
-				else if (startWith(line, "<td class=\"property\">Engine kw</td>")) {
+				else if (lineIsEquals(line, "<td class=\"property\">Engine kw</td>")) {
 					line = dis.readLine().trim();
 					kw = checkModificationData(line);
-				}  else if (startWith(line, "<td class=\"property\">Engine hp</td>")) {
+				}  else if (lineIsEquals(line, "<td class=\"property\">Engine hp</td>")) {
 					line = dis.readLine().trim();
 					hp = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Torque</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Torque</td>")) {
 					line = dis.readLine().trim();
 					torque = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Fuel supply</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Fuel supply</td>")) {
 					line = dis.readLine().trim();
 					fuelSupply = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Cylinders</td>>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Cylinders</td>")) {
 					line = dis.readLine().trim();
 					cylinders = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Cylinders diameter</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Cylinders diameter</td>")) {
 					line = dis.readLine().trim();
 					cylinderDiameter = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Valves in cylinders</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Valves in cylinders</td>")) {
 					line = dis.readLine().trim();
 					valvesInCylinders = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Gears</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Gears</td>")) {
 					line = dis.readLine().trim();
 					gears = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Fuel</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Fuel</td>")) {
 					line = dis.readLine().trim();
 					fuel = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Fuel capacity</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Fuel capacity</td>")) {
 					line = dis.readLine().trim();
 					fuelCapacity = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Eco standart</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Eco standart</td>")) {
 					line = dis.readLine().trim();
 					ecoStandart = checkModificationData(line);
 				}
 				// Chasis
-				else if (startWith(line, "<td class=\"property\">ABS</td>")) {
+				else if (lineIsEquals(line, "<td class=\"property\">ABS</td>")) {
 					line = dis.readLine().trim();
 					abs = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Front brakes</td")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Front brakes</td")) {
 					line = dis.readLine().trim();
 					frontBrakes = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Rear brakes</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Rear brakes</td>")) {
 					line = dis.readLine().trim();
 					rearBrakes = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Tires</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Tires</td>")) {
 					line = dis.readLine().trim();
 					tires = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Wheels</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Wheels</td>")) {
 					line = dis.readLine().trim();
 					wheels = checkModificationData(line);
 				}
 				/* Running Features */
-				// TODO: set Max speed to double
-				// TODO: set Acceleration to double
-				// TODO: set Fuel town, Fuel road, Fuel average
-				else if (startWith(line, "<td class=\"property\">Max speed</td>")) {
+				else if (lineIsEquals(line, "<td class=\"property\">Max speed</td>")) {
 					line = dis.readLine().trim();
 					maxSpeed = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Acceleration</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Acceleration</td>")) {
 					line = dis.readLine().trim();
 					acceleration = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Fuel town</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Fuel town</td>")) {
 					line = dis.readLine().trim();
 					fuelTown = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Fuel road</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Fuel road</td>")) {
 					line = dis.readLine().trim();
 					fuelRoad = checkModificationData(line);
-				} else if (startWith(line, "<td class=\"property\">Fuel average</td>")) {
+				} else if (lineIsEquals(line, "<td class=\"property\">Fuel average</td>")) {
 					line = dis.readLine().trim();
 					fuelAverage = checkModificationData(line);
 				}
@@ -381,7 +402,7 @@ public class ExtractUtils {
 				    .fuelSupply(fuelSupply)
 				    .cylinders(cylinders)
 				    .cylinderDiameter(cylinderDiameter)
-				    .ValvesInCylinders(valvesInCylinders)
+				    .valvesInCylinders(valvesInCylinders)
 				    .gears(gears)
 				    .fuel(fuel)
 				    .fuelCapacity(fuelCapacity)
@@ -419,8 +440,8 @@ public class ExtractUtils {
 		}
 	}
 
-	private boolean startWith(String line, String part) {
-		return line.startsWith(part);
+	private boolean lineIsEquals(String line, String part) {
+		return line.equals(part);
 	}
 
 	// TODO: check for NullPointer
@@ -522,24 +543,21 @@ public class ExtractUtils {
 		logger.debug("[ExtractService] - extractManufacturersData");
 		String line;
 		List<BrandExtractDto> dtoList = new LinkedList<>();
-//		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(mainUrl).openStream()))) {
-//			while ((line = dis.readLine()) != null) {
-//				if (line.trim().startsWith("<a href=\"/en/models/")) {
-//					String url = line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
-//					String name = line.substring(line.indexOf(">") + 1, line.indexOf("<span"));
-//					BrandExtractDto dto = BrandExtractDto.builder().name(name)
-//							.url(mainUrl + url).build();
-//					dtoList.add(dto);
-//				}
-//			}
-//		} catch (MalformedURLException mue) {
-//			mue.printStackTrace();
-//		} catch (IOException ioe) {
-//			ioe.printStackTrace();
-//		}
-		BrandExtractDto dto = BrandExtractDto.builder().name("hummer")
-				.url(mainUrl).build();
-		dtoList.add(dto);
+		try (BufferedReader dis = new BufferedReader(new InputStreamReader(new URL(mainUrl).openStream()))) {
+			while ((line = dis.readLine()) != null) {
+				if (line.trim().startsWith("<a href=\"/en/models/")) {
+					String url = line.substring(line.indexOf("\"") + 1, line.indexOf(" class") - 1);
+					String name = line.substring(line.indexOf(">") + 1, line.indexOf("<span"));
+					BrandExtractDto dto = BrandExtractDto.builder().name(name)
+							.url(mainUrl + url).build();
+					dtoList.add(dto);
+				}
+			}
+		} catch (MalformedURLException mue) {
+			mue.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
 		return dtoList;
 	}
 

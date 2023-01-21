@@ -17,16 +17,16 @@ public class Engine {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String displacement;
-    private String kw;
-    private String hp;
+    private Integer kw;
+    private Integer hp;
     private String torque;
     private String fuelSupply;
-    private String cylinders;
-    private String cylinderDiameter;
-    private String ValvesInCylinders;
-    private String gears;
+    private Integer cylinders;
+    private Double cylinderDiameter;
+    private Integer valvesInCylinders;
+    private Integer gears;
     private String fuel;
-    private String fuelCapacity;
+    private Integer fuelCapacity;
     private String ecoStandart;
 
     

@@ -15,7 +15,7 @@ public class EngineExtractDto {
     private String fuelSupply;
     private String cylinders;
     private String cylinderDiameter;
-    private String ValvesInCylinders;
+    private String valvesInCylinders;
     private String gears;
     private String fuel;
     private String fuelCapacity;

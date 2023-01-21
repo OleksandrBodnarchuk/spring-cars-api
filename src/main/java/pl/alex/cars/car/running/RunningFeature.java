@@ -18,11 +18,11 @@ public class RunningFeature {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String maxSpeed;
-	private String acceleration;
-	private String fuelTown;
-	private String fuelRoad;
-	private String fuelAverage;
+	private Integer maxSpeed;
+	private Double acceleration;
+	private Double fuelTown;
+	private Double fuelRoad;
+	private Double fuelAverage;
 	
 	@OneToOne(mappedBy = "runningFeature")
 	private Modification modification;

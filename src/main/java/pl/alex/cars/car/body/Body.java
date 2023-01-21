@@ -16,12 +16,12 @@ public class Body {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-    private String length;
-    private String width;
-    private String height;
+    private Integer length;
+    private Integer width;
+    private Integer height;
     private String wheelBase;
-    private String weight;
-    private String maxWidth;
+    private Integer weight;
+    private Integer maxWidth;
     private String bootCapacity;
     
 	@OneToOne(mappedBy = "body")

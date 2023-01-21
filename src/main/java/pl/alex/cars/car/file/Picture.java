@@ -23,7 +23,7 @@ public class Picture {
 	private Long id;
 	private String name;
 	@Lob
-	@Column(name = "data", columnDefinition = "BLOB NOT NULL")
+	@Column(name = "data", columnDefinition = "MEDIUMBLOB")
 	private byte[] data;
 	private boolean isMainPicture;
 

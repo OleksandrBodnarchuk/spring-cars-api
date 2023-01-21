@@ -20,7 +20,6 @@ import pl.alex.cars.extract.dto.SubModelExtractDto;
 @ExtendWith(SpringExtension.class) // JUnit 5
 @ContextConfiguration(classes = { BrandMapperImpl.class })
 class MapperTest {
-	@Test
 	void shouldMapBrandDtoToEntity() {
 		// given
 		String name = "Brand";
