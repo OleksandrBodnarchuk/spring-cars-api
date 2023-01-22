@@ -1,11 +1,13 @@
 package pl.alex.cars.car.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pl.alex.cars.car.brand.Brand;
 import pl.alex.cars.car.submodel.SubModel;
 
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -15,11 +17,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class Model {
 
 	@Id
@@ -40,13 +42,30 @@ public class Model {
 			   CascadeType.REFRESH })
 	private List<SubModel> submodels;
 	
-	@Transient
-	private String url;
+	@Override
+	public int hashCode() {
+		return Objects.hash(brand, id, name, submodels);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Model other = (Model) obj;
+		return Objects.equals(brand, other.brand) && Objects.equals(id, other.id) && Objects.equals(name, other.name)
+				&& Objects.equals(submodels, other.submodels);
+	}
 	
 //	@OneToMany(mappedBy = "model", cascade = { CascadeType.DETACH, 
 //			   CascadeType.MERGE, 
 //			   CascadeType.PERSIST,
 //			   CascadeType.REFRESH })
 //	private List<Picture> pictures;
+	
+	
 
 }
