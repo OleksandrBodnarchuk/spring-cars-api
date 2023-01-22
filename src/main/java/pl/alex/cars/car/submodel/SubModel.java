@@ -40,13 +40,10 @@ public class SubModel {
 			CascadeType.PERSIST,
 			CascadeType.REFRESH })
 	private List<Modification> modifications;
-	
-	@Transient
-	private String url;
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(id, name);
 	}
 
 	@Override
@@ -58,6 +55,9 @@ public class SubModel {
 		if (getClass() != obj.getClass())
 			return false;
 		SubModel other = (SubModel) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
+	
+
+	
 }

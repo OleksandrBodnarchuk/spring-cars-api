@@ -40,7 +40,7 @@ class BrandControllerTest extends WebTestUtil {
 		});
 		
 		// when
-		BDDMockito.given(brandService.getMultipleBrands(ArgumentMatchers.any(BrandRequest.class))).willReturn(new PageImpl<>(brandResponse));
+		BDDMockito.given(brandService.getMultipleBrands(ArgumentMatchers.any(BrandRequest.class))).willReturn(brandResponse);
 		
 		// then
 		mockMvc.perform(post("/brands/brands")
@@ -48,8 +48,8 @@ class BrandControllerTest extends WebTestUtil {
 						.content(mapper.writeValueAsString(request)))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content").isArray())
-				.andExpect(jsonPath("$.content").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andExpect(jsonPath("$.[0].name").value(BMW));
 	}
 	
 	@DisplayName("[/brands/brands] - will FAIL on validation")
@@ -60,7 +60,7 @@ class BrandControllerTest extends WebTestUtil {
 		request.setNames(List.of());
 		
 		// when
-		BDDMockito.given(brandService.getMultipleBrands(ArgumentMatchers.any(BrandRequest.class))).willReturn(new PageImpl<>(List.of()));
+		BDDMockito.given(brandService.getMultipleBrands(ArgumentMatchers.any(BrandRequest.class))).willReturn(List.of());
 		
 		// then
 		mockMvc.perform(post("/brands/brands")
@@ -122,7 +122,7 @@ class BrandControllerTest extends WebTestUtil {
 	
 	@DisplayName("[/brands/{brandName}/models] - will redirect to ModelController")
 	@Test
-	void testGetModelByBrandName_ShouldRedirect() throws Exception {
+	void test_getModelByBrandName_ShouldRedirect() throws Exception {
 
 		// given
 		ModelResponse response = new ModelResponse();

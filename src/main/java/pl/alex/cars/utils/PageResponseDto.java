@@ -1,4 +1,4 @@
-package pl.alex.cars.car.submodel;
+package pl.alex.cars.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -8,7 +8,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@JsonInclude(value = Include.NON_NULL)
-public class SubModelResponse {
-	private String name;
+@JsonInclude(value = Include.NON_EMPTY)
+public class PageResponseDto {
+
+	protected int ordinal;
+	protected String name;
 }

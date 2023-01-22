@@ -9,14 +9,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pl.alex.cars.car.model.Model;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 public class Brand {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,16 +29,10 @@ public class Brand {
 								   CascadeType.PERSIST,
 								   CascadeType.REFRESH })
 	private List<Model> models;
-	
-	@Transient
-	private String url; 
-//	@OneToOne(cascade = CascadeType.ALL)
-//	@JoinColumn(name = "logo_id")
-//	private Logo logo;
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(id, name);
 	}
 
 	@Override
@@ -49,6 +44,6 @@ public class Brand {
 		if (getClass() != obj.getClass())
 			return false;
 		Brand other = (Brand) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
 }
