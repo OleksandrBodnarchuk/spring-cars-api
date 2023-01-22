@@ -1,5 +1,6 @@
 package pl.alex.cars.api.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -7,36 +8,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pl.alex.cars.car.brand.BrandRequest;
 import pl.alex.cars.car.brand.BrandResponse;
-import pl.alex.cars.car.brand.BrandService;
+import pl.alex.cars.car.model.ModelResponse;
 
 @WebMvcTest
-class BrandControllerTest {
-	
-	private static final String BMW = "BMW";
-	private static final String AUDI = "AUDI";
-	private static final String TOYOTA = "TOYOTA";
-	
-	@Autowired private MockMvc mockMvc;
-	@Autowired private ObjectMapper mapper;
-	
-	@MockBean private BrandService brandService;
-	
+class BrandControllerTest extends WebTestUtil {
+
 	@DisplayName("[/brands/brands] - will return multiple dtos matched by their names")
 	@Test
 	void test_getMultipleBrands_shouldReturn_dto_list() throws JsonProcessingException, Exception {
@@ -129,6 +118,26 @@ class BrandControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.content").isArray())
 		.andExpect(jsonPath("$.numberOfElements").value(3));
+	}
+	
+	@DisplayName("[/brands/{brandName}/models] - will redirect to ModelController")
+	@Test
+	void testGetModelByBrandName_ShouldRedirect() throws Exception {
+
+		// given
+		ModelResponse response = new ModelResponse();
+		response.setName(TOYOTA);
+		List<ModelResponse> dtos = List.of(response);
+		// when
+		BDDMockito.given(modelService.getModelResponseByBrandName(ArgumentMatchers.any(String.class)))
+				.willReturn(new PageImpl<>(dtos));
+
+		// then
+		mockMvc.perform(
+				get("/brands/{brandName}/models", TOYOTA)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().is3xxRedirection());
 	}
 
 }

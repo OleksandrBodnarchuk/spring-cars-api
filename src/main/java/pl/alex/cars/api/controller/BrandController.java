@@ -1,10 +1,14 @@
 package pl.alex.cars.api.controller;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,9 +41,15 @@ public class BrandController {
 		return ResponseEntity.ok(response);
 	}
 	
+	@GetMapping("/{name}/models")
+	public ResponseEntity<?> sendRedirrect(@PathVariable("name") String brandName) throws IOException {
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+				.header(HttpHeaders.LOCATION, "/models/" + brandName).build();
+	}
+	
 	@PostMapping("/{name}")
-	public ResponseEntity<BrandResponse> getBrandByName(@PathVariable("name") String name){
-		BrandResponse response = brandService.getBrandResponseByName(name);
+	public ResponseEntity<BrandResponse> getBrandByName(@PathVariable("name") String brandName){
+		BrandResponse response = brandService.getBrandResponseByName(brandName);
 		return ResponseEntity.ok(response);
 	}
 
