@@ -1,4 +1,4 @@
-package pl.alex.cars.car.brand;
+package pl.alex.cars.car.model;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import pl.alex.cars.utils.CarPageable;
 
 @Getter
 @Setter
-public class BrandRequest extends CarPageable {
+public class ModelRequest extends CarPageable {
 	private List<String> names;
+
 }
