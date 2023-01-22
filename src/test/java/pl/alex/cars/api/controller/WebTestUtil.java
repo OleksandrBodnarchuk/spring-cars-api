@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pl.alex.cars.car.brand.BrandService;
 import pl.alex.cars.car.model.ModelService;
+import pl.alex.cars.car.submodel.SubModelService;
 
 public class WebTestUtil {
 
@@ -21,5 +22,6 @@ public class WebTestUtil {
 	
 	@MockBean protected BrandService brandService;
 	@MockBean protected ModelService modelService;
+	@MockBean protected SubModelService subModelService;
 	
 }

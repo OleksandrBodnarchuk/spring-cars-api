@@ -8,7 +8,7 @@ import pl.alex.cars.utils.CarPageable;
 
 @Getter
 @Setter
-class ModelRequest extends CarPageable {
+public class ModelRequest extends CarPageable {
 	private List<String> names;
 
 }

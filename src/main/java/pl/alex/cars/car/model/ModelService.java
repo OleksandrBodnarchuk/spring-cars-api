@@ -15,5 +15,9 @@ public class ModelService {
 	public Page<ModelResponse> getModelResponseByBrandName(String name) {
 		return null;
 	}
+
+	public Page<ModelResponse> findAllModels(ModelRequest modelRequest) {
+		return null;
+	}
 	
 }
