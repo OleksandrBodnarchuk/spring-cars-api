@@ -33,5 +33,13 @@ public class BrandService {
 		}
 		return new PageImpl<>(dtos, brands.getPageable(), brands.getTotalElements());
 	}
+
+	public BrandResponse getBrandResponseByName(String name) {
+		return null;
+	}
+
+	public Page<BrandResponse> getMultipleBrands(BrandRequest brandRequest) {
+		return null;
+	}
 	
 }
