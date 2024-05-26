@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import pl.alex.cars.car.brand.Brand;
-import pl.alex.cars.car.brand.BrandResponse;
+import pl.alex.cars.api.brand.entity.Brand;
+import pl.alex.cars.api.brand.dto.BrandResponse;
 
 @Mapper //(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface BrandMapper {
