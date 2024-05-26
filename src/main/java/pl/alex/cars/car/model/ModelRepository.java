@@ -1,8 +1,11 @@
 package pl.alex.cars.car.model;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 
 
-public interface ModelRepository extends JpaRepository<Model, Long>{
+public interface ModelRepository extends CrudRepository<Model, Long> {
 
+  Page<ModelResponse> findAllByBrandName(String name, Pageable pageable);
 }

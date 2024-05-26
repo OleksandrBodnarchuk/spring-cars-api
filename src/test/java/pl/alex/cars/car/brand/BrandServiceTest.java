@@ -65,7 +65,7 @@ class BrandServiceTest {
 
 		assertTrue(!response.getModels().isEmpty());
 		assertTrue(response.getModels().size() == 3);
-		assertTrue(response.getModels().get(0).getName().equals(models.get(0).getName()));
+		assertTrue(response.getModels().get(0).name().equals(models.get(0).getName()));
 
 	}
 

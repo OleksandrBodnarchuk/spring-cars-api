@@ -1,4 +1,4 @@
-package pl.alex.cars.api.controller;
+package pl.alex.cars.api.ui.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

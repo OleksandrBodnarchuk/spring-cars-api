@@ -33,7 +33,7 @@ class BrandControllerTest extends WebTestUtil {
 		BrandRequest request = new BrandRequest();
 		request.setNames(List.of(BMW, AUDI, TOYOTA));
 		List<BrandResponse> brandResponse = new ArrayList<>(); 
-		request.getNames().stream().forEach(name -> {
+		request.getNames().forEach(name -> {
 			BrandResponse response = new BrandResponse();
 			response.setName(name);
 			brandResponse.add(response);
@@ -125,11 +125,10 @@ class BrandControllerTest extends WebTestUtil {
 	void test_getModelByBrandName_ShouldRedirect() throws Exception {
 
 		// given
-		ModelResponse response = new ModelResponse();
-		response.setName(TOYOTA);
+		ModelResponse response = new ModelResponse(TOYOTA);
 		List<ModelResponse> dtos = List.of(response);
 		// when
-		BDDMockito.given(modelService.getModelResponseByBrandName(ArgumentMatchers.any(String.class)))
+		BDDMockito.given(modelService.getModelResponseByBrandName(ArgumentMatchers.any()))
 				.willReturn(new PageImpl<>(dtos));
 
 		// then

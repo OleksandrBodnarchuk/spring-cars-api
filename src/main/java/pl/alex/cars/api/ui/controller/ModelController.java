@@ -1,4 +1,4 @@
-package pl.alex.cars.api.controller;
+package pl.alex.cars.api.ui.controller;
 
 import java.io.IOException;
 
@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import pl.alex.cars.api.ui.dto.ModelRequestQuery;
 import pl.alex.cars.car.model.ModelResponse;
 import pl.alex.cars.car.model.ModelService;
 
@@ -25,8 +27,10 @@ public class ModelController {
 	}
 
 	@GetMapping("/{brand}")
-	public ResponseEntity<Page<ModelResponse>> getModelsByBrand(@PathVariable("brand") String brandName){
-		Page<ModelResponse> response =  modelService.getModelResponseByBrandName(brandName);
+	public ResponseEntity<Page<ModelResponse>> getModelsByBrand(@PathVariable("brand") String brandName,
+			@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "size", defaultValue = "10") Integer size) {
+		Page<ModelResponse> response =  modelService.getModelResponseByBrandName(ModelRequestQuery.of(brandName, page, size));
 		return ResponseEntity.ok(response);
 	}
 	

@@ -1,4 +1,4 @@
-package pl.alex.cars.api.controller;
+package pl.alex.cars.api.ui.controller;
 
 import java.io.IOException;
 import java.util.Locale;

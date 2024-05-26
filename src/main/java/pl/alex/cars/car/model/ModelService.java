@@ -2,6 +2,7 @@ package pl.alex.cars.car.model;
 
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import pl.alex.cars.api.ui.dto.ModelRequestQuery;
 
 @Service
 public class ModelService {
@@ -12,8 +13,8 @@ public class ModelService {
 		this.modelRepository = modelRepository;
 	}
 
-	public Page<ModelResponse> getModelResponseByBrandName(String name) {
-		return null;
+	public Page<ModelResponse> getModelResponseByBrandName(ModelRequestQuery modelRequestQuery) {
+		return modelRepository.findAllByBrandName(modelRequestQuery.brandName(), modelRequestQuery.pageable());
 	}
 
 	public Page<ModelResponse> findAllModels(ModelRequest modelRequest) {
