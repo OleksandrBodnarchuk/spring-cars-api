@@ -15,15 +15,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import pl.alex.cars.api.brand.dto.BrandRequest;
 import pl.alex.cars.api.brand.dto.BrandResponse;
 import pl.alex.cars.api.brand.entity.Brand;
 import pl.alex.cars.api.brand.repository.BrandRepository;
 import pl.alex.cars.api.model.entity.Model;
-import pl.alex.cars.utils.CommonUtils;
 
 @ExtendWith(MockitoExtension.class)
 class BrandServiceTest {
@@ -45,15 +41,11 @@ class BrandServiceTest {
 	@DisplayName("[findAllBrands] - should return Page<BrandResponse>")
 	@Test
 	public void when_findAllBrands_thenReturnPageOfBrandResponse() {
-		BrandRequest brandRequest = new BrandRequest();
-		brandRequest.setPageNumber(0);
-		brandRequest.setPageSize(20);
-		Pageable pageable = CommonUtils.createPageable(brandRequest);
-		given(brandRepository.findAll(pageable)).willReturn(new PageImpl<>(brands));
-		Page<BrandResponse> findAllBrands = underTest.findAllBrands(pageable);
+		given(brandRepository.findAll()).willReturn(brands);
+		List<String> findAllBrands = underTest.findAllBrands();
 
-		assertThat(findAllBrands.getSize()).isEqualTo(20);
-		assertThat(findAllBrands.toList().get(5).getName()).isEqualTo(brands.get(5).getName());
+		assertThat(findAllBrands.size()).isEqualTo(20);
+		assertThat(findAllBrands.get(5)).contains(brands.get(5).getName());
 	}
 
 	@DisplayName("[getBrandResponseByName] - should return BrandResponse")
@@ -66,7 +58,7 @@ class BrandServiceTest {
 
 		assertTrue(!response.getModels().isEmpty());
 		assertTrue(response.getModels().size() == 3);
-		assertTrue(response.getModels().get(0).name().equals(models.get(0).getName()));
+		assertTrue(response.getModels().contains(models.get(0).getName()));
 
 	}
 
@@ -89,11 +81,12 @@ class BrandServiceTest {
 
 		given(brandRepository.findBrandByNameIn(brandRequest.getNames())).willReturn(brands.subList(0, 2));
 
-		List<BrandResponse> response = underTest.getMultipleBrands(brandRequest);
+		List<String> response = underTest.getMultipleBrands(brandRequest);
 
 		assertThat(response.size()).isEqualTo(2);
-		assertThat(response.get(0).getName()).isEqualTo(brands.get(0).getName());
-		assertThat(response.get(0).getModels()).isNotEmpty();
+		assertThat(response.get(0)).isNotEmpty();
+		assertThat(response.get(0)).contains(brands.get(0).getName());
+
 	}
 
 
