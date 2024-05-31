@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,8 @@ import pl.alex.cars.api.modification.entity.Modification;
 public class RunningFeature {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "running_feature_seq")
+  @SequenceGenerator(name = "running_feature_seq", sequenceName = "running_feature_sequence", allocationSize = 10)
   private Long id;
   private Integer maxSpeed;
   private Double acceleration;

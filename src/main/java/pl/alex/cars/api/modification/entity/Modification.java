@@ -6,7 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +17,7 @@ import pl.alex.cars.api.body.Body;
 import pl.alex.cars.api.chasis.Chasis;
 import pl.alex.cars.api.engine.Engine;
 import pl.alex.cars.api.info.GeneralInfo;
+import pl.alex.cars.api.model.entity.Model;
 import pl.alex.cars.api.running.entity.RunningFeature;
 
 @Data
@@ -25,7 +28,8 @@ import pl.alex.cars.api.running.entity.RunningFeature;
 public class Modification {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "modification_seq")
+  @SequenceGenerator(name = "modification_seq", sequenceName = "modification_sequence", allocationSize = 10)
   private Long id;
 
   private String name;
@@ -66,4 +70,10 @@ public class Modification {
   @JoinColumn(name = "running_feature_id", referencedColumnName = "id")
   private RunningFeature runningFeature;
 
+  @ManyToOne(cascade = {CascadeType.DETACH,
+      CascadeType.MERGE,
+      CascadeType.PERSIST,
+      CascadeType.REFRESH})
+  @JoinColumn(name = "model_id")
+  private Model model;
 }
