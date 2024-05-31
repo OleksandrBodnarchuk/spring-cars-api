@@ -1,4 +1,4 @@
-package pl.alex.cars.api.model;
+package pl.alex.cars.api.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

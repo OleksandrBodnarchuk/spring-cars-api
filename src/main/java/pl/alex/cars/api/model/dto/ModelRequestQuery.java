@@ -1,4 +1,4 @@
-package pl.alex.cars.api.model;
+package pl.alex.cars.api.model.dto;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

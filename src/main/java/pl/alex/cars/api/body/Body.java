@@ -5,25 +5,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-import lombok.Getter;
-import lombok.Setter;
-import pl.alex.cars.api.modification.Modification;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import pl.alex.cars.api.modification.entity.Modification;
 
-@Getter
-@Setter
+@Data
+@Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Body {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-    private Integer length;
-    private Integer width;
-    private Integer height;
-    private String wheelBase;
-    private Integer weight;
-    private Integer maxWidth;
-    private String bootCapacity;
-    
-	@OneToOne(mappedBy = "body")
-	private Modification modification;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  private Integer length;
+  private Integer width;
+  private Integer height;
+  private String wheelBase;
+  private Integer weight;
+  private Integer maxWidth;
+  private String bootCapacity;
+
+  @OneToOne(mappedBy = "body")
+  private Modification modification;
 }

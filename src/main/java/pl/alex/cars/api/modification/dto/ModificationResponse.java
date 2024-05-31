@@ -1,4 +1,4 @@
-package pl.alex.cars.api.submodel;
+package pl.alex.cars.api.modification.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(value = Include.NON_NULL)
-public class SubModelResponse {
+public class ModificationResponse {
 	private String name;
 }

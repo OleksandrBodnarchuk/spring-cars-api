@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import pl.alex.cars.api.brand.dto.BrandRequest;
 import pl.alex.cars.api.brand.dto.BrandResponse;
 import pl.alex.cars.api.WebTestUtil;
-import pl.alex.cars.api.model.ModelResponse;
+import pl.alex.cars.api.model.dto.ModelResponse;
 
 @WebMvcTest
 class BrandControllerTest extends WebTestUtil {
@@ -33,16 +33,16 @@ class BrandControllerTest extends WebTestUtil {
 		// given
 		BrandRequest request = new BrandRequest();
 		request.setNames(List.of(BMW, AUDI, TOYOTA));
-		List<BrandResponse> brandResponse = new ArrayList<>(); 
+		List<BrandResponse> brandResponse = new ArrayList<>();
 		request.getNames().forEach(name -> {
 			BrandResponse response = new BrandResponse();
 			response.setName(name);
 			brandResponse.add(response);
 		});
-		
+
 		// when
 		BDDMockito.given(brandService.getMultipleBrands(ArgumentMatchers.any(BrandRequest.class))).willReturn(brandResponse);
-		
+
 		// then
 		mockMvc.perform(post("/v0/brands/multiple")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -52,17 +52,17 @@ class BrandControllerTest extends WebTestUtil {
 				.andExpect(jsonPath("$").isNotEmpty())
 				.andExpect(jsonPath("$.[0].name").value(BMW));
 	}
-	
+
 	@DisplayName("[/brands/multiple] - will FAIL on validation")
 	@Test
 	void test_getMultipleBrands_shouldFAIL_onValidation() throws JsonProcessingException, Exception {
 		// given
 		BrandRequest request = new BrandRequest();
 		request.setNames(List.of());
-		
+
 		// when
 		BDDMockito.given(brandService.getMultipleBrands(ArgumentMatchers.any(BrandRequest.class))).willReturn(List.of());
-		
+
 		// then
 		mockMvc.perform(post("/v0/brands/multiple")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,7 @@ class BrandControllerTest extends WebTestUtil {
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
-	
+
 	@DisplayName("[/brands/{name}] - will return 1 dto matched by name")
 	@Test
 	void test_getBrandByName_shouldReturn_dto() throws JsonProcessingException, Exception {
@@ -79,11 +79,11 @@ class BrandControllerTest extends WebTestUtil {
 		request.setNames(List.of(BMW));
 		BrandResponse brandResponse = new BrandResponse();
 		brandResponse.setName(BMW);
-		
+
 		// when
 		BDDMockito.given(brandService.getBrandResponseByName(request.getNames().get(0)))
 						.willReturn(brandResponse);
-		
+
 		// then
 		mockMvc.perform(post("/v0/brands/{name}", BMW)
 						.contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +92,7 @@ class BrandControllerTest extends WebTestUtil {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value(BMW));
 	}
-	
+
 	@DisplayName("[/brands] - will return page of dtos")
 	@Test
 	void test_getBrands_shouldReturn_Pages() throws JsonProcessingException, Exception {
@@ -105,11 +105,11 @@ class BrandControllerTest extends WebTestUtil {
 			dto.setName("DTO: " + i);
 			dtos.add(dto);
 		}
-		
+
 		// when
 		BDDMockito.given(brandService.findAllBrands(ArgumentMatchers.any()))
 				.willReturn(new PageImpl<>(dtos));
-		
+
 		// then
 		mockMvc.perform(post("/v0/brands")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -119,7 +119,7 @@ class BrandControllerTest extends WebTestUtil {
 		.andExpect(jsonPath("$.content").isArray())
 		.andExpect(jsonPath("$.numberOfElements").value(3));
 	}
-	
+
 	@DisplayName("[/brands/{brandName}/models] - will redirect to ModelController")
 	@Test
 	void test_getModelByBrandName_ShouldRedirect() throws Exception {

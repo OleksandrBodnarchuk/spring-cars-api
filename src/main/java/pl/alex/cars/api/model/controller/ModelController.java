@@ -1,5 +1,6 @@
-package pl.alex.cars.api.model;
+package pl.alex.cars.api.model.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,15 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.alex.cars.api.ApiV0;
+import pl.alex.cars.api.model.ModelApi;
+import pl.alex.cars.api.model.dto.ModelRequestQuery;
+import pl.alex.cars.api.model.dto.ModelResponse;
+import pl.alex.cars.api.model.service.ModelService;
 
 @Controller
+@RequiredArgsConstructor
 public class ModelController implements ApiV0, ModelApi {
 
   private final ModelService modelService;
-
-  public ModelController(ModelService modelService) {
-    this.modelService = modelService;
-  }
 
   @Override
   public ResponseEntity<Page<ModelResponse>> getModelsByBrand(

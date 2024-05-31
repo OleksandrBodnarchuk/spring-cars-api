@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.alex.cars.api.model.ModelResponse;
+import pl.alex.cars.api.model.dto.ModelResponse;
 
 @Getter
 @Setter

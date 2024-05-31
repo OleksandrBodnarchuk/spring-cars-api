@@ -16,23 +16,23 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 
 import pl.alex.cars.api.WebTestUtil;
-import pl.alex.cars.api.submodel.SubModelResponse;
+import pl.alex.cars.api.modification.dto.ModificationResponse;
 
 @WebMvcTest
 class SubModelControllerTest extends WebTestUtil {
-	
+
 
 	@DisplayName("[/submodels/{model}] - will return 1 model dto matched by brand name")
 	@Test
 	void testGetModelByBrandName() throws Exception {
 
 		// given
-		SubModelResponse response = new SubModelResponse();
+		ModificationResponse response = new ModificationResponse();
 		String submodel = "A3 Hatchback (8V)";
 		response.setName(submodel);
-		List<SubModelResponse> dtos = List.of(response);
+		List<ModificationResponse> dtos = List.of(response);
 		// when
-		BDDMockito.given(subModelService.getSubModelResponseByBrandName(ArgumentMatchers.any(String.class)))
+		BDDMockito.given(modificationService.getSubModelResponseByBrandName(ArgumentMatchers.any(String.class)))
 				.willReturn(new PageImpl<>(dtos));
 
 		// then
@@ -44,5 +44,5 @@ class SubModelControllerTest extends WebTestUtil {
 				.andExpect(jsonPath("$.content.[0].name").value(submodel))
 				.andExpect(jsonPath("$.numberOfElements").value(1));
 	}
-	
+
 }

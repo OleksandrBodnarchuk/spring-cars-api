@@ -1,10 +1,12 @@
-package pl.alex.cars.api.brand.entity;
+package pl.alex.cars.api.model.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -12,25 +14,33 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import pl.alex.cars.api.model.entity.Model;
+import pl.alex.cars.api.brand.entity.Brand;
+import pl.alex.cars.api.modification.entity.Modification;
 
 @Data
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Brand {
+public class Model {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   private String name;
 
-  @OneToMany(mappedBy = "brand", cascade = {CascadeType.DETACH,
+  @ManyToOne(cascade = {CascadeType.DETACH,
+      CascadeType.MERGE,
+      CascadeType.PERSIST,
+      CascadeType.REFRESH})
+  @JoinColumn(name = "brand_id")
+  private Brand brand;
+
+  @OneToMany(mappedBy = "model", cascade = {CascadeType.DETACH,
       CascadeType.MERGE,
       CascadeType.PERSIST,
       CascadeType.REFRESH})
   @BatchSize(size = 30)
-  private List<Model> models;
+  private List<Modification> modifications;
 
 }

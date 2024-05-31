@@ -1,4 +1,4 @@
-package pl.alex.cars.api.model;
+package pl.alex.cars.api.model.dto;
 
 import java.util.List;
 

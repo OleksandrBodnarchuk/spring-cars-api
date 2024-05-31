@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import pl.alex.cars.api.WebTestUtil;
-import pl.alex.cars.api.model.ModelResponse;
+import pl.alex.cars.api.model.dto.ModelResponse;
 
 @WebMvcTest
 class ModelControllerTest extends WebTestUtil {
@@ -42,5 +42,5 @@ class ModelControllerTest extends WebTestUtil {
 				.andExpect(jsonPath("$.content").isArray())
 				.andExpect(jsonPath("$.numberOfElements").value(dtos.size()));
 	}
-	
+
 }

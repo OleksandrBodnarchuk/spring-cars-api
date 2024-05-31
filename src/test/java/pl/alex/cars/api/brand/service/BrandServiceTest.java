@@ -22,7 +22,7 @@ import pl.alex.cars.api.brand.dto.BrandRequest;
 import pl.alex.cars.api.brand.dto.BrandResponse;
 import pl.alex.cars.api.brand.entity.Brand;
 import pl.alex.cars.api.brand.repository.BrandRepository;
-import pl.alex.cars.api.model.Model;
+import pl.alex.cars.api.model.entity.Model;
 import pl.alex.cars.utils.CommonUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,11 +76,11 @@ class BrandServiceTest {
 		String name = "Bob";
 
 		given(brandRepository.findByNameEquals(name)).willReturn(Optional.empty());
-		
+
 		assertThatThrownBy(() -> underTest.getBrandResponseByName(name))
         	.isInstanceOf(IllegalArgumentException.class);
 	}
-	
+
 	@DisplayName("[getMultipleBrands]- with multiple brands - should return list")
 	@Test
 	public void when_getMultipleBrands_shouldReturnList() {
@@ -88,14 +88,14 @@ class BrandServiceTest {
 		brandRequest.setNames(List.of("Brand1", "Brand2"));
 
 		given(brandRepository.findBrandByNameIn(brandRequest.getNames())).willReturn(brands.subList(0, 2));
-		
+
 		List<BrandResponse> response = underTest.getMultipleBrands(brandRequest);
-		
+
 		assertThat(response.size()).isEqualTo(2);
 		assertThat(response.get(0).getName()).isEqualTo(brands.get(0).getName());
 		assertThat(response.get(0).getModels()).isNotEmpty();
 	}
-	
+
 
 	private List<Brand> fillUpBrands() {
 		List<Brand> result = new ArrayList<>();

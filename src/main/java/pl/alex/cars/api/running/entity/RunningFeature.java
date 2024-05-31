@@ -1,4 +1,4 @@
-package pl.alex.cars.api.info;
+package pl.alex.cars.api.running.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,18 +16,17 @@ import pl.alex.cars.api.modification.entity.Modification;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class GeneralInfo {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String yearOfCreation;
-	private String brand;
-	private String engine;
-	private String bodyType;
-	private String model;
-	private String doors;
-	private String seats;
+public class RunningFeature {
 
-	@OneToOne(mappedBy = "generalInfo")
-	private Modification modification;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  private Integer maxSpeed;
+  private Double acceleration;
+  private Double fuelTown;
+  private Double fuelRoad;
+  private Double fuelAverage;
+
+  @OneToOne(mappedBy = "runningFeature")
+  private Modification modification;
 }
