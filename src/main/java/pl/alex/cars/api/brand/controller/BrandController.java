@@ -1,12 +1,11 @@
 package pl.alex.cars.api.brand.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,10 +53,9 @@ class BrandController implements ApiV0, BrandApi {
   }
 
   @Override
-  public ResponseEntity<Page<BrandResponse>> getAllBrands(Integer page, Integer size) {
+  public ResponseEntity<List<String>> getBrands() {
     log.info("[{}] - getAllBrands() - called", className);
-    Page<BrandResponse> brands = brandService.findAllBrands(PageRequest.of(page, size));
-    return ResponseEntity.ok(brands);
+    return ResponseEntity.ok(brandService.findAllBrands());
   }
 
 }

@@ -2,18 +2,19 @@ package pl.alex.cars.api.brand.dto;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import pl.alex.cars.api.model.dto.ModelResponse;
 
 @Getter
-@Setter
-@JsonInclude(value = Include.NON_DEFAULT)
+@Builder
 public class BrandResponse {
-	private String name;
-	private List<BrandResponse> brandNames;
-	private List<ModelResponse> models;
+  private String name;
+  private List<String> models;
+
+  public static BrandResponse of(String name, List<String> models) {
+    return BrandResponse.builder()
+        .name(name)
+        .models(models)
+        .build();
+  }
 }
