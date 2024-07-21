@@ -1,34 +1,38 @@
 package pl.alex.cars.api.brand.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import pl.alex.cars.api.ApiV0;
-import pl.alex.cars.api.brand.BrandApi;
 import pl.alex.cars.api.brand.dto.BrandRequest;
 import pl.alex.cars.api.brand.dto.BrandResponse;
 import pl.alex.cars.api.brand.service.BrandService;
 
 @Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
-class BrandController implements ApiV0, BrandApi {
+class BrandController implements ApiV0 {
 
   private final String className = this.getClass().getSimpleName();
 
   private final MessageSource messageSource;
   private final BrandService brandService;
 
-  @Override
-  public ResponseEntity<?> getMultipleBrands(BrandRequest brandRequest) {
+  @RequestMapping(value = "/brands/multiple",
+      produces = {"application/json"},
+      method = RequestMethod.POST)
+  public ResponseEntity<?> getMultipleBrands(@RequestBody BrandRequest brandRequest) {
     log.info("[{}] - getMultipleBrands() - called", className);
+    //FIXME: add @Valid if possible
     if (brandRequest.getNames() == null || brandRequest.getNames().isEmpty()) {
       return ResponseEntity.badRequest()
           .body(messageSource.getMessage("brand.name.list.rest.validation", null,
@@ -37,23 +41,22 @@ class BrandController implements ApiV0, BrandApi {
     return ResponseEntity.ok(brandService.getMultipleBrands(brandRequest));
   }
 
-  @Override
-  public ResponseEntity<?> sendRedirrect(String brandName)
-      throws IOException {
-    log.info("[{}] - sendRedirrect() - called", className);
-    return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-        .header(HttpHeaders.LOCATION, "/models/" + brandName).build();
+  @RequestMapping(value = "/brands/{name}",
+      produces = {"application/json"},
+      method = RequestMethod.GET)
+  public ResponseEntity<BrandResponse> getBrandByName(
+      @PathVariable("name") String brandName,
+      @RequestParam(name = "includeModels", defaultValue = "true") boolean includeModels) {
+
+    log.info("[{}] - getBrandByName() - called", brandName);
+    BrandResponse brandResponse = brandService.getBrandResponseByName(brandName, includeModels);
+    return ResponseEntity.ok(brandResponse);
   }
 
-  @Override
-  public ResponseEntity<BrandResponse> getBrandByName(String brandName) {
-    log.info("[{}] - getBrandByName() - called", className);
-    BrandResponse response = brandService.getBrandResponseByName(brandName);
-    return ResponseEntity.ok(response);
-  }
-
-  @Override
-  public ResponseEntity<List<String>> getBrands() {
+  @RequestMapping(value = "/brands",
+      produces = {"application/json"},
+      method = RequestMethod.GET)
+  public ResponseEntity<List<BrandResponse>> getBrands() {
     log.info("[{}] - getAllBrands() - called", className);
     return ResponseEntity.ok(brandService.findAllBrands());
   }
