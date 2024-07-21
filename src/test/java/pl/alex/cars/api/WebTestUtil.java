@@ -11,9 +11,6 @@ import pl.alex.cars.api.modification.service.ModificationService;
 
 public class WebTestUtil {
 
-  protected static final String BMW = "BMW";
-  protected static final String AUDI = "AUDI";
-  protected static final String TOYOTA = "TOYOTA";
 
   @Autowired
   protected MockMvc mockMvc;
