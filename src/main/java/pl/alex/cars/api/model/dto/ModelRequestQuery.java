@@ -8,12 +8,13 @@ public record ModelRequestQuery(String brandName, Pageable pageable) {
 
   public static ModelRequestQuery of(String brandName, Integer page, Integer size) {
     if (page == null || page < 0) {
+      // FIXME: fix exception handling and add localization
       throw new InvalidDataException("Page value must be greater than 0");
     }
     if (size == null || size < 1 || size > 200) {
+      // FIXME: fix exception handling and add localization
       throw new InvalidDataException("Size value must be between 1-200");
     }
     return new ModelRequestQuery(brandName, PageRequest.of(page, size));
   }
-
 }

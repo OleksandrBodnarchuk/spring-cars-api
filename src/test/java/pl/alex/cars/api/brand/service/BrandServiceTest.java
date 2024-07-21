@@ -2,115 +2,113 @@ package pl.alex.cars.api.brand.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pl.alex.cars.api.TestEntityFactory;
 import pl.alex.cars.api.brand.dto.BrandRequest;
 import pl.alex.cars.api.brand.dto.BrandResponse;
 import pl.alex.cars.api.brand.entity.Brand;
+import pl.alex.cars.api.brand.exception.BrandNotFoundException;
 import pl.alex.cars.api.brand.repository.BrandRepository;
+import pl.alex.cars.api.model.dto.ModelResponse;
 import pl.alex.cars.api.model.entity.Model;
 
 @ExtendWith(MockitoExtension.class)
 class BrandServiceTest {
 
-	private List<Brand> brands;
-	private List<Model> models;
+  private static final List<Brand> BRANDS = TestEntityFactory.createBrandsWithModels(5, 3);
 
-	@Mock
-	BrandRepository brandRepository;
-	@InjectMocks
-	BrandService underTest;
+  @Mock
+  BrandRepository brandRepository;
 
-	@BeforeEach
-	public void setUp() {
-		brands = fillUpBrands();
-		models = fillUpModels();
-	}
+  @InjectMocks
+  BrandService underTest;
 
-	@DisplayName("[findAllBrands] - should return Page<BrandResponse>")
-	@Test
-	public void when_findAllBrands_thenReturnPageOfBrandResponse() {
-		given(brandRepository.findAll()).willReturn(brands);
-		List<String> findAllBrands = underTest.findAllBrands();
+  @DisplayName("[findAllBrands] - should return List<BrandResponse>")
+  @Test
+  public void when_findAllBrands_thenReturnListOfBrandResponse() {
+    // Given
+    given(brandRepository.findAll()).willReturn(BRANDS);
 
-		assertThat(findAllBrands.size()).isEqualTo(20);
-		assertThat(findAllBrands.get(5)).contains(brands.get(5).getName());
-	}
+    // When
+    List<BrandResponse> findAllBrands = underTest.findAllBrands();
 
-	@DisplayName("[getBrandResponseByName] - should return BrandResponse")
-	@Test
-	public void when_getBrandResponseByName_thenReturnBrandResponse() {
-		String name = brands.get(5).getName();
-		given(brandRepository.findByNameEquals(name)).willReturn(Optional.of(brands.get(5)));
+    // Then
+    assertThat(findAllBrands).hasSize(BRANDS.size());
+    assertThat(findAllBrands).extracting("name").containsExactlyElementsOf(
+        BRANDS.stream().map(Brand::getName).toList());
+  }
 
-		BrandResponse response = underTest.getBrandResponseByName(name);
+  @DisplayName("[getBrandResponseByName] - should return BrandResponse with models")
+  @Test
+  public void when_getBrandResponseByNameWithModels_thenReturnBrandResponse() {
+    // Given
+    Brand brand = BRANDS.get(0);
+    String name = brand.getName();
+    given(brandRepository.findByNameEquals(name)).willReturn(Optional.of(brand));
 
-		assertTrue(!response.getModels().isEmpty());
-		assertTrue(response.getModels().size() == 3);
-		assertTrue(response.getModels().contains(models.get(0).getName()));
+    // When
+    BrandResponse response = underTest.getBrandResponseByName(name, true);
 
-	}
+    // Then
+    assertThat(response.getModels()).isNotEmpty();
+    assertThat(response.getModels()).hasSize(brand.getModels().size());
+    assertThat(response.getModels().stream().map(ModelResponse::name)).containsExactlyElementsOf(
+        brand.getModels().stream().map(Model::getName).toList());
+  }
 
-	@DisplayName("[getBrandResponseByName]- when brand is not found - should throw exception")
-	@Test
-	public void when_getBrandResponseBy_Wrong_Name_thenThrowException() {
-		String name = "Bob";
+  @DisplayName("[getBrandResponseByName] - should return BrandResponse without models")
+  @Test
+  public void when_getBrandResponseByNameWithoutModels_thenReturnBrandResponse() {
+    // Given
+    Brand brand = BRANDS.get(0);
+    String name = brand.getName();
+    given(brandRepository.findByNameEquals(name)).willReturn(Optional.of(brand));
 
-		given(brandRepository.findByNameEquals(name)).willReturn(Optional.empty());
+    // When
+    BrandResponse response = underTest.getBrandResponseByName(name, false);
 
-		assertThatThrownBy(() -> underTest.getBrandResponseByName(name))
-        	.isInstanceOf(IllegalArgumentException.class);
-	}
+    // Then
+    assertThat(response.getModels()).isEmpty();
+  }
 
-	@DisplayName("[getMultipleBrands]- with multiple brands - should return list")
-	@Test
-	public void when_getMultipleBrands_shouldReturnList() {
-		BrandRequest brandRequest = new BrandRequest();
-		brandRequest.setNames(List.of("Brand1", "Brand2"));
+  @DisplayName("[getBrandResponseByName] - when brand is not found - should throw exception")
+  @Test
+  public void when_getBrandResponseByWrongName_thenThrowException() {
+    // Given
+    String name = "NonExistingBrand";
+    given(brandRepository.findByNameEquals(name)).willReturn(Optional.empty());
 
-		given(brandRepository.findBrandByNameIn(brandRequest.getNames())).willReturn(brands.subList(0, 2));
+    // When / Then
+    assertThatThrownBy(() -> underTest.getBrandResponseByName(name, true))
+        .isInstanceOf(BrandNotFoundException.class)
+        .hasMessageContaining(name);
+  }
 
-		List<String> response = underTest.getMultipleBrands(brandRequest);
+  @DisplayName("[getMultipleBrands] - with multiple brands - should return list")
+  @Test
+  public void when_getMultipleBrands_shouldReturnList() {
+    // Given
+    BrandRequest brandRequest = new BrandRequest();
+    brandRequest.setNames(BRANDS.stream().limit(2).map(Brand::getName).toList());
 
-		assertThat(response.size()).isEqualTo(2);
-		assertThat(response.get(0)).isNotEmpty();
-		assertThat(response.get(0)).contains(brands.get(0).getName());
+    given(brandRepository.findBrandByNameIn(brandRequest.getNames())).willReturn(
+        BRANDS.subList(0, 2));
 
-	}
+    // When
+    List<BrandResponse> response = underTest.getMultipleBrands(brandRequest);
 
-
-	private List<Brand> fillUpBrands() {
-		List<Brand> result = new ArrayList<>();
-		for (int i = 0; i < 20; i++) {
-			Brand brand = new Brand();
-			brand.setName("[" + i + "] " + "Brand");
-			result.add(brand);
-		}
-		return result;
-	}
-
-	private List<Model> fillUpModels() {
-		List<Model> result = new ArrayList<>();
-		for (int i = 0; i < 3; i++) {
-			Model model = new Model();
-			model.setBrand(brands.get(5));
-			model.setName("MODEL [" + i + "]");
-			result.add(model);
-		}
-		brands.get(0).setModels(result);
-		brands.get(1).setModels(result);
-		brands.get(5).setModels(result);
-		return result;
-	}
+    // Then
+    assertThat(response).hasSize(2);
+    assertThat(response).extracting("name").containsExactlyElementsOf(
+        BRANDS.subList(0, 2).stream().map(Brand::getName).toList());
+  }
 }
