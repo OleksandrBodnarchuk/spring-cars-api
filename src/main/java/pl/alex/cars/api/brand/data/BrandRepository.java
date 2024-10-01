@@ -1,9 +1,8 @@
-package pl.alex.cars.api.brand.repository;
+package pl.alex.cars.api.brand.data;
 
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import pl.alex.cars.api.brand.entity.Brand;
 
 public interface BrandRepository extends JpaRepository<Brand, Long> {
 

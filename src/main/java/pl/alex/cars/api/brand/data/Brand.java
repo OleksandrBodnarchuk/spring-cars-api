@@ -1,4 +1,4 @@
-package pl.alex.cars.api.brand.entity;
+package pl.alex.cars.api.brand.data;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

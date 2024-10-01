@@ -1,4 +1,4 @@
-package pl.alex.cars.api.brand.dto;
+package pl.alex.cars.api.brand.ui;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import pl.alex.cars.api.model.dto.ModelResponse;
 
 @Getter
 @Builder
-public class BrandResponse {
+class BrandResponse {
   private Long id;
   private String name;
   private List<ModelResponse> models;

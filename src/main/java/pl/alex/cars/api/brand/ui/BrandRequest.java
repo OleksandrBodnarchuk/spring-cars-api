@@ -1,4 +1,4 @@
-package pl.alex.cars.api.brand.dto;
+package pl.alex.cars.api.brand.ui;
 
 import java.util.List;
 
@@ -8,6 +8,6 @@ import pl.alex.cars.utils.CarPageable;
 
 @Getter
 @Setter
-public class BrandRequest extends CarPageable {
+class BrandRequest extends CarPageable {
 	private List<String> names;
 }
