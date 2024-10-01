@@ -15,7 +15,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
-import pl.alex.cars.api.brand.entity.Brand;
+import pl.alex.cars.api.brand.data.Brand;
 import pl.alex.cars.api.modification.entity.Modification;
 
 @Data

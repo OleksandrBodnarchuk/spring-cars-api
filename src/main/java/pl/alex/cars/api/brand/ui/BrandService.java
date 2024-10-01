@@ -1,20 +1,18 @@
-package pl.alex.cars.api.brand.service;
+package pl.alex.cars.api.brand.ui;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.alex.cars.api.brand.dto.BrandRequest;
-import pl.alex.cars.api.brand.dto.BrandResponse;
-import pl.alex.cars.api.brand.entity.Brand;
+import pl.alex.cars.api.brand.data.Brand;
 import pl.alex.cars.api.brand.exception.BrandNotFoundException;
-import pl.alex.cars.api.brand.repository.BrandRepository;
+import pl.alex.cars.api.brand.data.BrandRepository;
 import pl.alex.cars.api.model.dto.ModelResponse;
 
 @Service
 @RequiredArgsConstructor
-public class BrandService {
+class BrandService {
 
   private final BrandRepository brandRepository;
 

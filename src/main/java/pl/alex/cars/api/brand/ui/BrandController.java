@@ -1,4 +1,4 @@
-package pl.alex.cars.api.brand.controller;
+package pl.alex.cars.api.brand.ui;
 
 import java.util.List;
 import java.util.Locale;
@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.alex.cars.api.ApiV0;
-import pl.alex.cars.api.brand.dto.BrandRequest;
-import pl.alex.cars.api.brand.dto.BrandResponse;
-import pl.alex.cars.api.brand.service.BrandService;
 
 @Slf4j
 @RestController

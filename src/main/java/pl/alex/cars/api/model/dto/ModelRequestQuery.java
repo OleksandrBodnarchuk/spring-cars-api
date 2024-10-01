@@ -15,6 +15,10 @@ public record ModelRequestQuery(String brandName, Pageable pageable) {
       // FIXME: fix exception handling and add localization
       throw new InvalidDataException("Size value must be between 1-200");
     }
-    return new ModelRequestQuery(brandName, PageRequest.of(page, size));
+    return new ModelRequestQuery(correctBrandName(brandName), PageRequest.of(page, size));
+  }
+
+  private static String correctBrandName(String brandName) {
+    return brandName.substring(0, 1).toUpperCase() + brandName.substring(1).toLowerCase();
   }
 }

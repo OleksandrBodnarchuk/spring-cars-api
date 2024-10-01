@@ -2,7 +2,7 @@ package pl.alex.cars.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import pl.alex.cars.api.brand.entity.Brand;
+import pl.alex.cars.api.brand.data.Brand;
 import pl.alex.cars.api.model.entity.Model;
 
 public class TestEntityFactory {
