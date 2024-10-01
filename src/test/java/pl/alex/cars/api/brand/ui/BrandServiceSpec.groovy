@@ -3,6 +3,7 @@ package pl.alex.cars.api.brand.ui
 import pl.alex.cars.api.TestEntityFactory
 import pl.alex.cars.api.brand.data.Brand
 import pl.alex.cars.api.brand.data.BrandRepository
+import pl.alex.cars.api.brand.exception.BrandNotFoundException
 import spock.lang.Specification
 import spock.lang.Title
 
