@@ -34,3 +34,4 @@ build/
 
 .mvn
 mvnw*
+/src/main/resources/application-dev.yml
