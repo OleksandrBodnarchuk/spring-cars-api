@@ -9,9 +9,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pl.alex.cars</groupId>
-	<artifactId>spring-cars-api</artifactId>
+	<artifactId>cars-api-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>spring-cars-api</name>
+	<name>cars-api-service</name>
 	<description>Spring REST api for cars</description>
 	<properties>
 		<java.version>17</java.version>
@@ -72,6 +72,10 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
