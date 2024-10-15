@@ -9,7 +9,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>pl.alex.cars</groupId>
-	<artifactId>cars-api-service</artifactId>
+	<artifactId>cars-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cars-api-service</name>
 	<description>Spring REST api for cars</description>
